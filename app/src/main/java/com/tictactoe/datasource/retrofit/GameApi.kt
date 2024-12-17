@@ -12,6 +12,9 @@ interface GameApi {
     @GET("/game/{id}")
     fun getGame(@Path("id") gameId: String): Call<GameDto>
 
+    @GET("/games")
+    fun getGames(): Call<List<GameDto>>
+
     @POST("/game/makeMove/{id}/{cell}")
     fun makeMove(
         @Path("id") gameId: String,
