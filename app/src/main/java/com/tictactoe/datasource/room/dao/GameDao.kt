@@ -1,0 +1,24 @@
+package com.tictactoe.datasource.room.dao
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.tictactoe.datasource.room.entity.GameEntity
+import java.util.UUID
+
+@Dao
+interface GameDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGame(game: GameEntity)
+
+    @Query("SELECT * FROM game_table WHERE id = :id")
+    suspend fun getGameById(id: UUID): GameEntity?
+
+    @Query("SELECT * FROM game_table")
+    suspend fun getAllGames(): List<GameEntity>
+
+    @Delete
+    suspend fun deleteGame(game: GameEntity)
+}

@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.retrofit.model.GameDto
 import com.tictactoe.ui.theme.TIcTacToeTheme
+import domain.model.Game
 import kotlinx.coroutines.launch
 import kotlin.math.log
 
@@ -64,33 +65,33 @@ class GameFragment : Fragment() {
         }
     }
 
-    private fun getGameById(id: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val result =
-                    NetworkService.getGame()
-                result.onSuccess { game ->
-                    println("New game created: $game")
-                }.onFailure { error ->
-                    println("Error creating game: ${error.message}")
-                }
-            } catch (e: Exception) {
-                println("Exception occurred: ${e.message}")
-            }
-        }
-    }
+//    private fun getGameById(id: String) {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            try {
+//                val result =
+//                    NetworkService.getGame()
+//                result.onSuccess { game ->
+//                    println("New game created: $game")
+//                }.onFailure { error ->
+//                    println("Error creating game: ${error.message}")
+//                }
+//            } catch (e: Exception) {
+//                println("Exception occurred: ${e.message}")
+//            }
+//        }
+//    }
 
     private fun getGames() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val result =
                     NetworkService.getGames()
-                val allGames: List<GameDto>
+                val allGames: List<Game>
                 result.onSuccess { games ->
-                    println("New game created: $games")
+                    println(games.toString())
                     allGames = games
                     for (game in allGames) {
-                        Log.d("GameTTT", game.id)
+                        Log.d("GameTTT", game.id.toString())
                     }
                 }.onFailure { error ->
                     println("Error creating game: ${error.message}")
@@ -157,7 +158,7 @@ fun MainScreen(onCreateNewGame: () -> Unit, onGetGames: () -> Unit, modifier: Mo
         Button(
             onClick = onGetGames
         ) {
-            Text("Create New Game", color = Color.White)
+            Text("Get all Games", color = Color.White)
         }
 
     }
