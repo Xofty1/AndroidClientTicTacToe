@@ -8,17 +8,14 @@ import com.tictactoe.datasource.room.dao.GameDao
 import com.tictactoe.datasource.room.dao.UserDao
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
-import dagger.Component
-import dagger.Component.Factory
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): TicTacToeDatabase {

@@ -27,13 +27,17 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.tictactoe.datasource.retrofit.NetworkService
-import com.tictactoe.datasource.retrofit.model.GameDto
+import com.tictactoe.datasource.room.TicTacToeDatabase
+import com.tictactoe.datasource.room.entity.GameEntity
 import com.tictactoe.ui.theme.TIcTacToeTheme
+import dagger.hilt.android.AndroidEntryPoint
 import domain.model.Game
 import kotlinx.coroutines.launch
-import kotlin.math.log
+import javax.inject.Inject
 
-class GameFragment : Fragment() {
+class GameFragment() : Fragment() {
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,7 +46,9 @@ class GameFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 TIcTacToeTheme {
-                    MainScreen(onCreateNewGame = { createNewGame() },
+                    MainScreen(onCreateNewGame = {
+                        createNewGame()
+                    },
                         onGetGames = { getGames() })
                 }
             }
@@ -58,6 +64,12 @@ class GameFragment : Fragment() {
                     println("New game created: $game")
                 }.onFailure { error ->
                     println("Error creating game: ${error.message}")
+//                    database.gameDao().insertGame(GameEntity(
+//                        id = "1",
+//                        board = "XOO OOXXO",
+//                        status = "DRAW",
+//                        turn = "X"
+//                    ))
                 }
             } catch (e: Exception) {
                 println("Exception occurred: ${e.message}")
@@ -103,9 +115,18 @@ class GameFragment : Fragment() {
     }
 }
 
+
 class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var database: TicTacToeDatabase
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
         enableEdgeToEdge()
         setContent {
             TIcTacToeTheme {

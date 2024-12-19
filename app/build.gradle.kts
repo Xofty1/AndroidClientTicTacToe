@@ -2,8 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.dagger.hilt.android") version "2.45"
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -40,9 +40,6 @@ android {
         compose = true
     }
 
-    buildFeatures{
-        viewBinding = true
-    }
 }
 
 dependencies {
@@ -75,13 +72,12 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
-    implementation("com.google.dagger:dagger:2.45") // Проверьте актуальную версию
-    kapt("com.google.dagger:dagger-compiler:2.45") // Компилятор для Dagger
-    implementation("com.google.dagger:dagger-android:2.45") // Dagger для Android
-    implementation("com.google.dagger:dagger-android-support:2.45") // Dagger для поддержки Android
-    kapt("com.google.dagger:dagger-android-processor:2.45") // Компилятор для Dagger Android
-    implementation("com.google.dagger:hilt-android:2.45") // Добавьте зависимость для Hilt
-    kapt("com.google.dagger:hilt-compiler:2.45") // Компилятор для Hilt
+    ksp("androidx.room:room-compiler:2.5.0")
+
+    ksp("com.google.dagger:dagger-compiler:2.48")
+    implementation ("com.google.dagger:hilt-android:2.48")
+    ksp( "com.google.dagger:hilt-android-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.48")
+    ksp("com.google.dagger:hilt-compiler:2.48")
 
 }

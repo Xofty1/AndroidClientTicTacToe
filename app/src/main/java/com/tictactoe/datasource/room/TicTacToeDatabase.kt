@@ -9,7 +9,11 @@ import com.tictactoe.datasource.room.entity.CurrentUserEntity
 import com.tictactoe.datasource.room.entity.GameEntity
 import com.tictactoe.datasource.room.entity.UserEntity
 
-@Database(entities = [GameEntity::class, UserEntity::class, CurrentUserEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [GameEntity::class, UserEntity::class, CurrentUserEntity::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class TicTacToeDatabase : RoomDatabase() {
     abstract fun gameDao(): GameDao
     abstract fun userDao(): UserDao
