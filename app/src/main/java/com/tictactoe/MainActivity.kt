@@ -115,7 +115,7 @@ class GameFragment() : Fragment() {
     }
 }
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var database: TicTacToeDatabase
