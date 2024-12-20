@@ -28,6 +28,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.room.TicTacToeDatabase
+import com.tictactoe.datasource.room.dao.GameDao
 import com.tictactoe.datasource.room.entity.GameEntity
 import com.tictactoe.ui.theme.TIcTacToeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,9 +36,12 @@ import domain.model.Game
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
+
 class GameFragment() : Fragment() {
 
-
+    @Inject
+    lateinit var gameDao: GameDao
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,12 +68,17 @@ class GameFragment() : Fragment() {
                     println("New game created: $game")
                 }.onFailure { error ->
                     println("Error creating game: ${error.message}")
-//                    database.gameDao().insertGame(GameEntity(
-//                        id = "1",
-//                        board = "XOO OOXXO",
-//                        status = "DRAW",
-//                        turn = "X"
-//                    ))
+                    gameDao.insertGame(GameEntity(
+                        id = "2",
+                        board = "XOO0OOXXO",
+                        status = "DRAW",
+                        turn = "X"
+                    ))
+                    val games = gameDao.getAllGames()
+                    games.map {
+                        println(it.id)
+                        println(it.board)
+                    }
                 }
             } catch (e: Exception) {
                 println("Exception occurred: ${e.message}")

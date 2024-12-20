@@ -7,7 +7,7 @@ import domain.utils.STATUS
 import domain.utils.TURN
 import java.util.UUID
 
-object GameMapperDatasource {
+object GameMapperRetrofit {
     fun fromDomain(game: Game): GameDto {
         return GameDto(
             board = game.board.board,
