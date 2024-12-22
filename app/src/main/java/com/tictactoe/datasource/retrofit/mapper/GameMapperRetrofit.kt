@@ -27,9 +27,9 @@ object GameMapperRetrofit {
                 else -> TURN.NONE
             },
             status = when (gameDTO.status) {
-                ("X WON") -> STATUS.X_WIN
-                ("O WON") -> STATUS.O_WIN
-                ("DRAW") -> STATUS.DRAW
+                STATUS.X_WIN.result -> STATUS.X_WIN
+                STATUS.O_WIN.result -> STATUS.O_WIN
+                STATUS.DRAW.result -> STATUS.DRAW
                 else -> STATUS.NONE
             },
         )

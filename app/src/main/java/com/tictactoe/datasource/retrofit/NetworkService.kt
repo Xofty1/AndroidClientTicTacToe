@@ -1,8 +1,9 @@
 package com.tictactoe.datasource.retrofit
 
 
+import android.util.Log
 import com.tictactoe.datasource.retrofit.model.GameDto
-import datasource.mapper.GameMapperDatasource
+import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -36,15 +37,17 @@ object NetworkService {
         retrofit.create(GameApi::class.java)
     }
 
-    suspend fun createNewGame(): Result<GameDto> {
+    suspend fun createNewGame(): Result<String> {
         return try {
             val response = gameApi.createGame().awaitResponse()
-            if (response.isSuccessful) {
-                Result.success(response.body()!!)
+            val body = response.body()?.string()
+            if (!body.isNullOrEmpty()) {
+                Result.success(body)
             } else {
-                Result.failure(Exception("Failed to create game: ${response.code()}"))
+                Result.failure(Exception("Empty response body"))
             }
         } catch (e: Exception) {
+            Log.d( "TTTT", "52 " + e.message)
             Result.failure(e)
         }
     }
@@ -57,7 +60,7 @@ object NetworkService {
 
                 val games = body.map { (idString, gameDto) ->
                     val id = UUID.fromString(idString)
-                    GameMapperDatasource.toDomain(gameDto, id)
+                    GameMapperRetrofit.toDomain(gameDto, id)
                 }
 
                 Result.success(games)
@@ -77,7 +80,7 @@ object NetworkService {
 
                 val gameId = UUID.fromString(body.first)
                 val gameDto = body.second
-                val game = GameMapperDatasource.toDomain(gameDto, gameId)
+                val game = GameMapperRetrofit.toDomain(gameDto, gameId)
 
                 Result.success(game)
             } else {

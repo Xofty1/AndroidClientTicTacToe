@@ -2,13 +2,14 @@ package com.tictactoe.datasource.retrofit
 
 import com.tictactoe.datasource.retrofit.model.GameDto
 import domain.model.Game
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface GameApi {
 
     @POST("/game/new")
-    fun createGame(): Call<GameDto>
+    fun createGame(): Call<ResponseBody>
 
     @GET("/game/{id}")
     fun getGame(@Path("id") gameId: String): Call<Pair<String, GameDto>>

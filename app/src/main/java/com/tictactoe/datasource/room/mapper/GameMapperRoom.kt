@@ -1,7 +1,5 @@
 package datasource.mapper
 
-import androidx.core.graphics.PathUtils.flatten
-import com.tictactoe.datasource.retrofit.model.GameDto
 import com.tictactoe.datasource.room.entity.GameEntity
 import domain.model.Game
 import domain.model.GameBoard
@@ -24,31 +22,29 @@ object GameMapperRoom {
     fun toDomain(gameEntity: GameEntity): Game {
         return Game(
             id = UUID.fromString(gameEntity.id),
-            board = GameBoard(gameEntity.board),
+            board = GameBoard(stringToBoard(gameEntity.board, 3)),
             turn = when (gameEntity.turn) {
                 ("X") -> TURN.X
                 ("O") -> TURN.O
                 else -> TURN.NONE
             },
-            status = when (gameDTO.status) {
-                ("X WON") -> STATUS.X_WIN
-                ("O WON") -> STATUS.O_WIN
-                ("DRAW") -> STATUS.DRAW
+            status = when (gameEntity.status) {
+                STATUS.X_WIN.result -> STATUS.X_WIN
+                STATUS.O_WIN.result -> STATUS.O_WIN
+                STATUS.DRAW.result -> STATUS.DRAW
                 else -> STATUS.NONE
             },
         )
     }
 
     fun stringToBoard(input: String, size: Int): Array<IntArray> {
-        // Проверяем, что длина строки подходит для создания двумерного массива заданного размера
         require(input.length == size * size) { "Input length must match the board size squared" }
 
-        // Преобразуем строку в двумерный массив
         return Array(size) { row ->
             IntArray(size) { col ->
                 when (input[row * size + col]) {
                     'X' -> 1  // Преобразуем 'X' в 1
-                    'O' -> 2  // Преобразуем 'O' в 2
+                    'O' -> -1  // Преобразуем 'O' в 2
                     else -> 0 // Все остальные символы в 0
                 }
             }

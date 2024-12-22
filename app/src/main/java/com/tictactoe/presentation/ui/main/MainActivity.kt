@@ -1,4 +1,4 @@
-package com.tictactoe
+package com.tictactoe.presentation.ui.main
 
 import android.os.Bundle
 import android.util.Log
@@ -29,7 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.room.TicTacToeDatabase
 import com.tictactoe.datasource.room.dao.GameDao
-import com.tictactoe.datasource.room.entity.GameEntity
+import com.tictactoe.datasource.room.factory.NewGameFactory
 import com.tictactoe.ui.theme.TIcTacToeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import domain.model.Game
@@ -64,21 +64,17 @@ class GameFragment() : Fragment() {
             try {
                 val result =
                     NetworkService.createNewGame()
-                result.onSuccess { game ->
-                    println("New game created: $game")
-                }.onFailure { error ->
-                    println("Error creating game: ${error.message}")
-                    gameDao.insertGame(GameEntity(
-                        id = "2",
-                        board = "XOO0OOXXO",
-                        status = "DRAW",
-                        turn = "X"
-                    ))
+                result.onSuccess { id ->
+                    println("New game created: $id")
+                    gameDao.insertGame(NewGameFactory.createNewGameEntity(id))
                     val games = gameDao.getAllGames()
                     games.map {
                         println(it.id)
                         println(it.board)
                     }
+                }.onFailure { error ->
+                    println("Error creating game: ${error.message}")
+
                 }
             } catch (e: Exception) {
                 println("Exception occurred: ${e.message}")
@@ -128,7 +124,6 @@ class GameFragment() : Fragment() {
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var database: TicTacToeDatabase
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
