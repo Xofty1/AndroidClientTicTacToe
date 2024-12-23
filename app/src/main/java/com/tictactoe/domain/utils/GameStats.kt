@@ -13,3 +13,12 @@ enum class STATUS(val result: String) {
     NONE("")
 }
 
+enum class AUTH_MESSSAGE (val text: String){
+    EMPTY_FIELDS("Поля не должны быть пустыми"),
+    SUCCESS_REGISTER("Успешная регистрация"),
+    SUCCESS_LOGIN("Успешный вход"),
+    UNSUCCESS_LOGIN("Некорректные данные входа"),
+    PASSWORD_CONFLICT("Пароли не совпадают"),
+    WEAK_PASSWORD("Ненадежный пароль"),
+    USER_CONFLICT("Такой пользователь уже существует"),
+}

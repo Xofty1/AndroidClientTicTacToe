@@ -2,6 +2,7 @@ package com.tictactoe.domain.di
 
 import android.content.Context
 import androidx.room.Room
+import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.TicTacToeDatabase
 import com.tictactoe.datasource.room.dao.CurrentUserDao
 import com.tictactoe.datasource.room.dao.GameDao
@@ -17,8 +18,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
+
     @Provides
     @Singleton
-    fun provideUserRepository(dao: UserDao): UserRepository = UserRepository(dao)
+    fun provideDatabaseService(db: TicTacToeDatabase): DatabaseService {
+        return DatabaseService(db)
+    }
 
+    @Provides
+    @Singleton
+    fun provideUserRepository(databaseService: DatabaseService): UserRepository {
+        return UserRepository(databaseService)
+    }
 }

@@ -1,6 +1,7 @@
 package com.tictactoe.presentation.ui.authorization
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.tictactoe.domain.viewModel.AuthViewModel
 import com.tictactoe.presentation.ui.main.MainActivity
+import domain.utils.AUTH_MESSSAGE
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, onNavigateToRegister: () -> Unit) {
@@ -58,11 +60,11 @@ fun LoginScreen(viewModel: AuthViewModel, onNavigateToRegister: () -> Unit) {
         Button(
             onClick = {
                 viewModel.authResult = { success ->
-                    if (success) {
-
+                    Toast.makeText(context, success.text, Toast.LENGTH_SHORT).show()
+                    if (success == AUTH_MESSSAGE.SUCCESS_LOGIN) {
                         val intent = Intent(context, MainActivity::class.java)
                         context.startActivity(intent)
-                    } else println("Ошибка авторизации!")
+                    }
                 }
                 viewModel.login(login, password)
 

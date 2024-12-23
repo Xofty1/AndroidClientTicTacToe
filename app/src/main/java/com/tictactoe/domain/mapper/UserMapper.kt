@@ -1,5 +1,6 @@
 package datasource.mapper
 
+import com.tictactoe.datasource.room.dao.UserDao
 import com.tictactoe.datasource.room.entity.GameEntity
 import com.tictactoe.datasource.room.entity.UserEntity
 import com.tictactoe.domain.model.User
@@ -10,17 +11,31 @@ import domain.utils.TURN
 import java.util.UUID
 
 object UserMapper {
-    fun toDatasource(user: User): UserEntity {
+    fun toEntityFromDomain(user: User): UserEntity {
         return UserEntity(
             login = user.login,
             password = user.password
         )
     }
 
-    fun toDomain(userEntity: UserEntity): User {
+    fun toDomainFromEntity(userEntity: UserEntity): User {
         return User(
             login = userEntity.login,
             password = userEntity.password
         )
     }
+
+//    fun toDtoFromDomain(user: User): User {
+//        return UserEntity(
+//            login = user.login,
+//            password = user.password
+//        )
+//    }
+
+//    fun toDomainFromDto(userEntity: UserDto): User {
+//        return User(
+//            login = userEntity.login,
+//            password = userEntity.password
+//        )
+//    }
 }

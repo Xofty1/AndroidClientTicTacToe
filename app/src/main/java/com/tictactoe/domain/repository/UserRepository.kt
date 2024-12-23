@@ -1,30 +1,45 @@
 package com.tictactoe.domain.repository
 
-import com.tictactoe.datasource.room.dao.CurrentUserDao
-import com.tictactoe.datasource.room.dao.UserDao
+import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.entity.UserEntity
 import com.tictactoe.domain.model.User
 import datasource.mapper.UserMapper
+import domain.utils.AUTH_MESSSAGE
+import javax.inject.Inject
 
-class UserRepository(private val userDao: UserDao) {
+class UserRepository @Inject constructor(
+    private val databaseService: DatabaseService
+) {
     lateinit var curUserDao: User
-    suspend fun registerUser(login: String, password: String): Boolean {
-        val existingUser = userDao.getUserByLogin(login)
+    suspend fun registerUser(login: String, password: String, confirmPassword: String): AUTH_MESSSAGE {
+        if (login.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+            return AUTH_MESSSAGE.EMPTY_FIELDS
+        }
+
+//        if (!isPasswordStrong(password)) {
+//            return AUTH_MESSSAGE.WEAK_PASSWORD
+//        }
+
+        val existingUser = databaseService.getUserByLogin(login)
         return if (existingUser == null) {
-            userDao.insertUser(UserEntity(login, password))
-            true // Успешная регистрация
+            if (password == confirmPassword) {
+                databaseService.insertUser(UserEntity(login, password))
+                AUTH_MESSSAGE.SUCCESS_REGISTER
+            } else {
+                AUTH_MESSSAGE.PASSWORD_CONFLICT
+            }
         } else {
-            false // Пользователь с таким логином уже существует
+            AUTH_MESSSAGE.USER_CONFLICT
         }
     }
 
-    suspend fun loginUser(login: String, password: String): Boolean {
-        val user = userDao.getUserByLogin(login)
-        if (user?.password == password) {
-            curUserDao = UserMapper.toDomain(user)
-            return true
+    suspend fun loginUser(login: String, password: String): AUTH_MESSSAGE {
+        val user = databaseService.getUserByLogin(login)
+        return if (user?.password == password) {
+            curUserDao = UserMapper.toDomainFromEntity(user)
+            AUTH_MESSSAGE.SUCCESS_LOGIN
         }
-        return false
+        else AUTH_MESSSAGE.UNSUCCESS_LOGIN
     }
 
     // может быть такое что текущий пользователь не проиницмализирован
@@ -34,5 +49,11 @@ class UserRepository(private val userDao: UserDao) {
         } else {
             null
         }
+    }
+
+    private fun isPasswordStrong(password: String): Boolean {
+        // Проверка: длина не менее 8 символов, наличие букв, цифр, специальных символов
+        val passwordRegex = Regex("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
+        return passwordRegex.matches(password)
     }
 }
