@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "current_user_table")
 data class CurrentUserEntity(
     @PrimaryKey val id: String,
-    val name: String,
-    val email: String
+    val login: String,
+    val password: String
 )

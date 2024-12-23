@@ -23,10 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.tictactoe.domain.viewModel.AuthViewModel
 import com.tictactoe.presentation.ui.main.MainActivity
 
 @Composable
-fun LoginScreen(onNavigateToRegister: () -> Unit) {
+fun LoginScreen(viewModel: AuthViewModel, onNavigateToRegister: () -> Unit) {
     val context = LocalContext.current
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -39,28 +40,32 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
     ) {
         TextField(
             value = login,
-            onValueChange = {login = it},
+            onValueChange = { login = it },
             label = { Text("Логин") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
-            value = password,
-            onValueChange = { password = it},
-            label = { Text("Пароль") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+        PasswordTextField(
+            password = password,
+            onPasswordChange = { password = it },
+            label = "Пароль"
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
+                viewModel.authResult = { success ->
+                    if (success) {
 
-                val intent = Intent(context, MainActivity::class.java)
-                context.startActivity(intent)
+                        val intent = Intent(context, MainActivity::class.java)
+                        context.startActivity(intent)
+                    } else println("Ошибка авторизации!")
+                }
+                viewModel.login(login, password)
+
             },
             modifier = Modifier.fillMaxWidth()
         ) {

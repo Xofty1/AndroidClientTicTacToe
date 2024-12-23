@@ -3,6 +3,7 @@ package com.tictactoe.datasource.retrofit
 
 import android.util.Log
 import com.tictactoe.datasource.retrofit.model.GameDto
+import com.tictactoe.domain.repository.UserRepository
 import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
 import okhttp3.OkHttpClient
@@ -11,15 +12,16 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-object NetworkService {
+class NetworkService(val userRepository: UserRepository) {
 
-    private const val BASE_URL = "http://192.168.43.228:8080"
+    private val BASE_URL = "http://192.168.43.228:8080"
 
 
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor())
+            .addInterceptor(AuthInterceptor(userRepository))
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
@@ -47,7 +49,7 @@ object NetworkService {
                 Result.failure(Exception("Empty response body"))
             }
         } catch (e: Exception) {
-            Log.d( "TTTT", "52 " + e.message)
+            Log.d("TTTT", "52 " + e.message)
             Result.failure(e)
         }
     }
@@ -90,10 +92,6 @@ object NetworkService {
             Result.failure(e)
         }
     }
-
-
-
-
 
 
 }

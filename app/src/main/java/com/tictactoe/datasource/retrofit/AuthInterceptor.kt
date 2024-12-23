@@ -1,25 +1,37 @@
 package com.tictactoe.datasource.retrofit
 
 import android.util.Base64
+import com.tictactoe.domain.repository.UserRepository
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class AuthInterceptor : Interceptor {
+class AuthInterceptor(private val userRepository: UserRepository) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val requestBuilder = chain.request().newBuilder()
+        val request = chain.request()
 
-        // Получение логина и пароля из хранилища (например, SharedPreferences)
-        val username = "yourUsername" // Замените на получение из базы данных
-        val password = "yourPassword" // Замените на получение из базы данных
+        // Получение логина и пароля из базы
+        val credentials = runBlocking { userRepository.getCredentials() }
 
-        // Формирование Basic auth
-        val credentials = "$username:$password"
-        val basicAuth = "Basic " + Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+        // Если данные есть, добавляем заголовок
+        val authenticatedRequest = if (credentials != null) {
+            val (login, password) = credentials
+            val authHeader = createBasicAuthHeader(login, password)
 
-        // Добавление заголовка Authorization
-        requestBuilder.addHeader("Authorization", basicAuth)
+            request.newBuilder()
+                .addHeader("Authorization", authHeader)
+                .build()
+        } else {
+            request
+        }
 
-        return chain.proceed(requestBuilder.build())
+        return chain.proceed(authenticatedRequest)
+    }
+
+    private fun createBasicAuthHeader(login: String, password: String): String {
+        val credentials = "$login:$password"
+        val base64Credentials = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+        return "Basic $base64Credentials"
     }
 }

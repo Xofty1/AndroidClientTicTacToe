@@ -4,43 +4,52 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import com.tictactoe.domain.repository.UserRepository
+import com.tictactoe.domain.viewModel.AuthViewModel
+import com.tictactoe.ui.theme.TIcTacToeTheme
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AuthorizationActivity : ComponentActivity() {
+    @Inject
+    lateinit var userRepository: UserRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            AuthorizationScreen()
+            TIcTacToeTheme {
+                AuthorizationScreen()
+            }
         }
     }
-}
 
-@Composable
-fun AuthorizationScreen() {
-    var isLoginScreen by remember { mutableStateOf(true) }
+    @Composable
+    fun AuthorizationScreen() {
+        val viewModel = AuthViewModel(userRepository)
+        var isLoginScreen by remember { mutableStateOf(true) }
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        if (isLoginScreen) {
-            LoginScreen(onNavigateToRegister = { isLoginScreen = false })
-        } else {
-            RegistrationScreen(onNavigateToLogin = { isLoginScreen = true })
+
+        Surface(modifier = Modifier.fillMaxSize()) {
+
+            if (isLoginScreen) {
+                LoginScreen(viewModel, onNavigateToRegister = { isLoginScreen = false })
+            } else {
+                RegistrationScreen(viewModel, onNavigateToLogin = { isLoginScreen = true })
+            }
         }
     }
+
 }
+
+
 
 

@@ -42,6 +42,9 @@ class GameFragment() : Fragment() {
 
     @Inject
     lateinit var gameDao: GameDao
+
+    @Inject
+    lateinit var networkService: NetworkService
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,7 +66,7 @@ class GameFragment() : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val result =
-                    NetworkService.createNewGame()
+                    networkService.createNewGame()
                 result.onSuccess { id ->
                     println("New game created: $id")
                     gameDao.insertGame(NewGameFactory.createNewGameEntity(id))
@@ -102,7 +105,7 @@ class GameFragment() : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val result =
-                    NetworkService.getGames()
+                    networkService.getGames()
                 val allGames: List<Game>
                 result.onSuccess { games ->
                     println(games.toString())

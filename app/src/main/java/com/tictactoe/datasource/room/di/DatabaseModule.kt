@@ -27,11 +27,14 @@ object DatabaseModule {
     }
 
     @Provides
+    @Singleton
     fun provideGameDao(db: TicTacToeDatabase): GameDao = db.gameDao()
 
     @Provides
+    @Singleton
     fun provideUserDao(db: TicTacToeDatabase): UserDao = db.userDao()
 
     @Provides
+    @Singleton
     fun provideCurrentUserDao(db: TicTacToeDatabase): CurrentUserDao = db.currentUserDao()
 }

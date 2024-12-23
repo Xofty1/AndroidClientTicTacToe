@@ -19,9 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.tictactoe.domain.viewModel.AuthViewModel
 
 @Composable
-fun RegistrationScreen(onNavigateToLogin: () -> Unit) {
+fun RegistrationScreen(viewModel: AuthViewModel , onNavigateToLogin: () -> Unit) {
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -58,7 +59,12 @@ fun RegistrationScreen(onNavigateToLogin: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Логика регистрации */ },
+            onClick = {
+                viewModel.authResult = { success ->
+                    if (success) println("Успешная регистрация!") else println("Пользователь уже существует!")
+                }
+                viewModel.register(login, password)
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Зарегистрироваться")
