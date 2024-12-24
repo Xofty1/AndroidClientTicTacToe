@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class NetworkService(val userRepository: UserRepository) {
 
-    private val BASE_URL = "http://192.168.43.228:8080"
+    private val BASE_URL = "http://192.168.43.135:8080"
 
 
     private val client: OkHttpClient by lazy {

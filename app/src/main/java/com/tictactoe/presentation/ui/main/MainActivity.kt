@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
+import com.tictactoe.R
+import com.tictactoe.databinding.ActivityMainBinding
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.room.TicTacToeDatabase
 import com.tictactoe.datasource.room.dao.GameDao
@@ -36,62 +38,83 @@ import domain.model.Game
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
-
-class GameFragment() : Fragment() {
-
-    @Inject
-    lateinit var gameDao: GameDao
-
-    @Inject
-    lateinit var networkService: NetworkService
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                TIcTacToeTheme {
-                    MainScreen(onCreateNewGame = {
-                        createNewGame()
-                    },
-                        onGetGames = { getGames() })
-                }
-            }
-        }
-    }
-
-    private fun createNewGame() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val result =
-                    networkService.createNewGame()
-                result.onSuccess { id ->
-                    println("New game created: $id")
-                    gameDao.insertGame(NewGameFactory.createNewGameEntity(id))
-                    val games = gameDao.getAllGames()
-                    games.map {
-                        println(it.id)
-                        println(it.board)
-                    }
-                }.onFailure { error ->
-                    println("Error creating game: ${error.message}")
-
-                }
-            } catch (e: Exception) {
-                println("Exception occurred: ${e.message}")
-            }
-        }
-    }
-
-//    private fun getGameById(id: String) {
+//@AndroidEntryPoint
+//
+//class GameFragment() : Fragment() {
+//
+//    @Inject
+//    lateinit var gameDao: GameDao
+//
+//    @Inject
+//    lateinit var networkService: NetworkService
+//    override fun onCreateView(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View {
+//        return ComposeView(requireContext()).apply {
+//            setContent {
+//                TIcTacToeTheme {
+//                    MainScreen(onCreateNewGame = {
+//                        createNewGame()
+//                    },
+//                        onGetGames = { getGames() })
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun createNewGame() {
 //        viewLifecycleOwner.lifecycleScope.launch {
 //            try {
 //                val result =
-//                    NetworkService.getGame()
-//                result.onSuccess { game ->
-//                    println("New game created: $game")
+//                    networkService.createNewGame()
+//                result.onSuccess { id ->
+//                    println("New game created: $id")
+//                    gameDao.insertGame(NewGameFactory.createNewGameEntity(id))
+//                    val games = gameDao.getAllGames()
+//                    games.map {
+//                        println(it.id)
+//                        println(it.board)
+//                    }
+//                }.onFailure { error ->
+//                    println("Error creating game: ${error.message}")
+//
+//                }
+//            } catch (e: Exception) {
+//                println("Exception occurred: ${e.message}")
+//            }
+//        }
+//    }
+//
+////    private fun getGameById(id: String) {
+////        viewLifecycleOwner.lifecycleScope.launch {
+////            try {
+////                val result =
+////                    NetworkService.getGame()
+////                result.onSuccess { game ->
+////                    println("New game created: $game")
+////                }.onFailure { error ->
+////                    println("Error creating game: ${error.message}")
+////                }
+////            } catch (e: Exception) {
+////                println("Exception occurred: ${e.message}")
+////            }
+////        }
+////    }
+//
+//    private fun getGames() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            try {
+//                val result =
+//                    networkService.getGames()
+//                val allGames: List<Game>
+//                result.onSuccess { games ->
+//                    println(games.toString())
+//                    allGames = games
+//                    for (game in allGames) {
+//                        Log.d("GameTTT", game.id.toString())
+//                    }
 //                }.onFailure { error ->
 //                    println("Error creating game: ${error.message}")
 //                }
@@ -100,72 +123,57 @@ class GameFragment() : Fragment() {
 //            }
 //        }
 //    }
-
-    private fun getGames() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val result =
-                    networkService.getGames()
-                val allGames: List<Game>
-                result.onSuccess { games ->
-                    println(games.toString())
-                    allGames = games
-                    for (game in allGames) {
-                        Log.d("GameTTT", game.id.toString())
-                    }
-                }.onFailure { error ->
-                    println("Error creating game: ${error.message}")
-                }
-            } catch (e: Exception) {
-                println("Exception occurred: ${e.message}")
-            }
-        }
-    }
-}
+//}
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var database: TicTacToeDatabase
 
-
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
 
-        enableEdgeToEdge()
-        setContent {
-            TIcTacToeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        AndroidView(
-                            factory = { context ->
-                                FragmentContainerView(context).apply {
-                                    id = View.generateViewId()
-                                    layoutParams = ViewGroup.LayoutParams(
-                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.MATCH_PARENT
-                                    )
-                                }
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        ) { fragmentContainerView ->
-                            // Убедитесь, что Fragment добавлен только один раз
-                            if (supportFragmentManager.findFragmentById(fragmentContainerView.id) == null) {
-                                supportFragmentManager.commit {
-                                    replace(fragmentContainerView.id, GameFragment())
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, GameFragment())
+                .commit()
         }
+//        setContent {
+//            TIcTacToeTheme {
+//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//                    Box(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .fillMaxSize()
+//                    ) {
+//                        AndroidView(
+//                            factory = { context ->
+//                                FragmentContainerView(context).apply {
+//                                    id = View.generateViewId()
+//                                    layoutParams = ViewGroup.LayoutParams(
+//                                        ViewGroup.LayoutParams.MATCH_PARENT,
+//                                        ViewGroup.LayoutParams.MATCH_PARENT
+//                                    )
+//                                }
+//                            },
+//                            modifier = Modifier.fillMaxSize()
+//                        ) { fragmentContainerView ->
+//                            // Убедитесь, что Fragment добавлен только один раз
+//                            if (supportFragmentManager.findFragmentById(fragmentContainerView.id) == null) {
+//                                supportFragmentManager.commit {
+//                                    replace(fragmentContainerView.id, GameFragment())
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 

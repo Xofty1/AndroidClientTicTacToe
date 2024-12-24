@@ -42,6 +42,10 @@ android {
         compose = true
     }
 
+    viewBinding{
+        enable = true
+    }
+
 
 }
 
@@ -61,6 +65,10 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.espresso.core)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -84,7 +92,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-compiler:2.48")
 
-
     implementation("androidx.compose.material:material-icons-extended:1.7.6")
     implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
 }

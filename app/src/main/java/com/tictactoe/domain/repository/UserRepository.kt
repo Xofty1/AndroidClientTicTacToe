@@ -10,7 +10,7 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(
     private val databaseService: DatabaseService
 ) {
-    lateinit var curUserDao: User
+    lateinit var currentUser: User
     suspend fun registerUser(login: String, password: String, confirmPassword: String): AUTH_MESSSAGE {
         if (login.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
             return AUTH_MESSSAGE.EMPTY_FIELDS
@@ -36,7 +36,7 @@ class UserRepository @Inject constructor(
     suspend fun loginUser(login: String, password: String): AUTH_MESSSAGE {
         val user = databaseService.getUserByLogin(login)
         return if (user?.password == password) {
-            curUserDao = UserMapper.toDomainFromEntity(user)
+            currentUser = UserMapper.toDomainFromEntity(user)
             AUTH_MESSSAGE.SUCCESS_LOGIN
         }
         else AUTH_MESSSAGE.UNSUCCESS_LOGIN
@@ -44,8 +44,8 @@ class UserRepository @Inject constructor(
 
     // может быть такое что текущий пользователь не проиницмализирован
     fun getCredentials(): Pair<String, String>? {
-        return if (::curUserDao.isInitialized) {
-            Pair(curUserDao.login, curUserDao.password)
+        return if (::currentUser.isInitialized) {
+            Pair(currentUser.login, currentUser.password)
         } else {
             null
         }
