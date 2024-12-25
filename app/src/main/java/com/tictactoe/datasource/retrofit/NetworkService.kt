@@ -2,8 +2,7 @@ package com.tictactoe.datasource.retrofit
 
 
 import android.util.Log
-import com.tictactoe.datasource.retrofit.model.GameDto
-import com.tictactoe.domain.repository.UserRepository
+import com.tictactoe.domain.repository.AuthRepository
 import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
 import okhttp3.OkHttpClient
@@ -12,16 +11,15 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class NetworkService(val userRepository: UserRepository) {
+class NetworkService(val authRepository: AuthRepository) {
 
     private val BASE_URL = "http://192.168.43.135:8080"
 
 
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(userRepository))
+            .addInterceptor(AuthInterceptor(authRepository))
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
@@ -37,6 +35,10 @@ class NetworkService(val userRepository: UserRepository) {
 
     private val gameApi: GameApi by lazy {
         retrofit.create(GameApi::class.java)
+    }
+
+    private val userApi: UserApi by lazy {
+        retrofit.create(UserApi::class.java)
     }
 
     suspend fun createNewGame(): Result<String> {
@@ -92,8 +94,6 @@ class NetworkService(val userRepository: UserRepository) {
             Result.failure(e)
         }
     }
-
-
 }
 
 

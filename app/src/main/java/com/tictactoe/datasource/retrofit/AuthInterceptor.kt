@@ -1,18 +1,18 @@
 package com.tictactoe.datasource.retrofit
 
 import android.util.Base64
-import com.tictactoe.domain.repository.UserRepository
+import com.tictactoe.domain.repository.AuthRepository
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class AuthInterceptor(private val userRepository: UserRepository) : Interceptor {
+class AuthInterceptor(private val authRepository: AuthRepository) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
         // Получение логина и пароля из базы
-        val credentials = runBlocking { userRepository.getCredentials() }
+        val credentials = runBlocking { authRepository.getCredentials() }
 
         // Если данные есть, добавляем заголовок
         val authenticatedRequest = if (credentials != null) {

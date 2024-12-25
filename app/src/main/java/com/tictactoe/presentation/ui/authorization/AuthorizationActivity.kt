@@ -11,7 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.tictactoe.domain.repository.UserRepository
+import com.tictactoe.domain.repository.AuthRepository
 import com.tictactoe.domain.viewModel.AuthViewModel
 import com.tictactoe.ui.theme.TIcTacToeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AuthorizationActivity : ComponentActivity() {
     @Inject
-    lateinit var userRepository: UserRepository
+    lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class AuthorizationActivity : ComponentActivity() {
 
     @Composable
     fun AuthorizationScreen() {
-        val viewModel = AuthViewModel(userRepository)
+        val viewModel = AuthViewModel(authRepository)
         var isLoginScreen by remember { mutableStateOf(true) }
 
 

@@ -1,17 +1,11 @@
 package com.tictactoe.domain.di
 
-import android.content.Context
-import androidx.room.Room
 import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.TicTacToeDatabase
-import com.tictactoe.datasource.room.dao.CurrentUserDao
-import com.tictactoe.datasource.room.dao.GameDao
-import com.tictactoe.datasource.room.dao.UserDao
-import com.tictactoe.domain.repository.UserRepository
+import com.tictactoe.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -27,7 +21,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(databaseService: DatabaseService): UserRepository {
-        return UserRepository(databaseService)
+    fun provideUserRepository(databaseService: DatabaseService): AuthRepository {
+        return AuthRepository(databaseService)
     }
 }
