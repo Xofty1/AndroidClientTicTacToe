@@ -95,4 +95,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.6")
     implementation("androidx.navigation:navigation-compose:2.8.5")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
+    implementation("io.ktor:ktor-server-content-negotiation:2.0.0")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 }

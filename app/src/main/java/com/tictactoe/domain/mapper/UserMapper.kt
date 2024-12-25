@@ -9,6 +9,7 @@ import domain.model.GameBoard
 import domain.utils.STATUS
 import domain.utils.TURN
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
 
 object UserMapper {
     fun toEntityFromDomain(user: User): UserEntity {
@@ -21,7 +22,8 @@ object UserMapper {
     fun toDomainFromEntity(userEntity: UserEntity): User {
         return User(
             login = userEntity.login,
-            password = userEntity.password
+            password = userEntity.password,
+            games = CopyOnWriteArrayList() // изменить
         )
     }
 

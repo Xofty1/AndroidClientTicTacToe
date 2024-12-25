@@ -14,7 +14,7 @@ object NetworkServiceModule {
 
     @Provides
     @Singleton
-    fun provideNetworkService(authRepository: AuthRepository): NetworkService {
-        return NetworkService(authRepository)
+    fun provideNetworkService(): NetworkService {
+        return NetworkService()
     }
 }

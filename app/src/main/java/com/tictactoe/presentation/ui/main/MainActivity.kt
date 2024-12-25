@@ -1,42 +1,20 @@
 package com.tictactoe.presentation.ui.main
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
 import com.tictactoe.R
 import com.tictactoe.databinding.ActivityMainBinding
-import com.tictactoe.datasource.retrofit.NetworkService
-import com.tictactoe.datasource.room.TicTacToeDatabase
-import com.tictactoe.datasource.room.dao.GameDao
-import com.tictactoe.datasource.room.factory.NewGameFactory
-import com.tictactoe.ui.theme.TIcTacToeTheme
 import dagger.hilt.android.AndroidEntryPoint
-import domain.model.Game
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 //@AndroidEntryPoint
 //

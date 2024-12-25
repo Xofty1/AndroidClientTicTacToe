@@ -1,5 +1,7 @@
 package com.tictactoe.domain.repository
 
-class UserRepository{
+import com.tictactoe.domain.model.User
+
+class UserRepository (var currentUser: User){
 
 }

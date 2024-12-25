@@ -1,5 +1,6 @@
 package com.tictactoe.domain.di
 
+import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.TicTacToeDatabase
 import com.tictactoe.domain.repository.AuthRepository
@@ -21,7 +22,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(databaseService: DatabaseService): AuthRepository {
-        return AuthRepository(databaseService)
+    fun provideAuthRepository(databaseService: DatabaseService, networkService: NetworkService): AuthRepository {
+        return AuthRepository(databaseService, networkService) // Зависимость NetworkService добавлена
     }
 }

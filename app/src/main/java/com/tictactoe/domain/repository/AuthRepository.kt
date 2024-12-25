@@ -1,5 +1,7 @@
 package com.tictactoe.domain.repository
 
+import com.tictactoe.datasource.retrofit.NetworkService
+import com.tictactoe.datasource.retrofit.mapper.UserMapperRetrofit
 import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.entity.UserEntity
 import com.tictactoe.domain.model.User
@@ -8,8 +10,11 @@ import domain.utils.AUTH_MESSSAGE
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
-    private val databaseService: DatabaseService
+    private val databaseService: DatabaseService,
+    private val networkService: NetworkService
 ) {
+
+
     lateinit var currentUser: User
     suspend fun registerUser(login: String, password: String, confirmPassword: String): AUTH_MESSSAGE {
         if (login.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
@@ -21,9 +26,11 @@ class AuthRepository @Inject constructor(
 //        }
 
         val existingUser = databaseService.getUserByLogin(login)
-        return if (existingUser == null) {
+        val isUserExist = networkService.isUserExist(login)
+        return if (isUserExist) {
             if (password == confirmPassword) {
                 databaseService.insertUser(UserEntity(login, password))
+                networkService.createUser(login, password)
                 AUTH_MESSSAGE.SUCCESS_REGISTER
             } else {
                 AUTH_MESSSAGE.PASSWORD_CONFLICT
@@ -34,12 +41,21 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun loginUser(login: String, password: String): AUTH_MESSSAGE {
-        val user = databaseService.getUserByLogin(login)
-        return if (user?.password == password) {
-            currentUser = UserMapper.toDomainFromEntity(user)
-            AUTH_MESSSAGE.SUCCESS_LOGIN
+        networkService.setLoginAndPassword(login, password)
+
+        val result = networkService.loginUser(login, password)
+        val user = result.getOrNull()
+        if (user != null){
+            currentUser = UserMapperRetrofit.toDomain(user)
+            return AUTH_MESSSAGE.SUCCESS_LOGIN
         }
-        else AUTH_MESSSAGE.UNSUCCESS_LOGIN
+        return AUTH_MESSSAGE.UNSUCCESS_LOGIN
+//        val user = databaseService.getUserByLogin(login)
+//        return if (user?.password == password) {
+//            currentUser = UserMapper.toDomainFromEntity(user)
+//            AUTH_MESSSAGE.SUCCESS_LOGIN
+//        }
+//        else AUTH_MESSSAGE.UNSUCCESS_LOGIN
     }
 
     // может быть такое что текущий пользователь не проиницмализирован
