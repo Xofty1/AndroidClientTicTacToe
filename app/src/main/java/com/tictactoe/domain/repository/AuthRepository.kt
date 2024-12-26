@@ -27,7 +27,7 @@ class AuthRepository @Inject constructor(
 
         val existingUser = databaseService.getUserByLogin(login)
         val isUserExist = networkService.isUserExist(login)
-        return if (isUserExist) {
+        return if (!isUserExist) {
             if (password == confirmPassword) {
                 databaseService.insertUser(UserEntity(login, password))
                 networkService.createUser(login, password)

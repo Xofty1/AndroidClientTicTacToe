@@ -5,8 +5,3 @@ data class UserDto(
     val password: String,
     val games: Map<String, GameDto>
 )
-
-data class LoginRequest(
-    val login: String,
-    val password: String
-)
