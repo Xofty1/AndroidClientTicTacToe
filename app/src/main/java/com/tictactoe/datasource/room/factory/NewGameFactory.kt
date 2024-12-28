@@ -9,7 +9,8 @@ object NewGameFactory {
             id = id,
             board = " ".repeat(9),
             turn = "X",
-            status = STATUS.NONE.result
+            status = STATUS.NONE.result,
+            userId = TODO()
         )
     }
 }

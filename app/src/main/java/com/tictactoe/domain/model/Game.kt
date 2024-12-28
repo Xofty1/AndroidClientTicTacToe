@@ -12,5 +12,5 @@ data class Game(
     val id: UUID,
     val board: GameBoard,
     var turn: TURN,
-    var status: STATUS = STATUS.NONE
+    var status: STATUS = STATUS.NONE,
 )

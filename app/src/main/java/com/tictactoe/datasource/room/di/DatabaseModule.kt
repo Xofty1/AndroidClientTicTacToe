@@ -23,7 +23,9 @@ object DatabaseModule {
             context,
             TicTacToeDatabase::class.java,
             "app_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

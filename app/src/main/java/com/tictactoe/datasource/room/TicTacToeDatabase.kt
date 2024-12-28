@@ -11,7 +11,7 @@ import com.tictactoe.datasource.room.entity.UserEntity
 
 @Database(
     entities = [GameEntity::class, UserEntity::class, CurrentUserEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class TicTacToeDatabase : RoomDatabase() {

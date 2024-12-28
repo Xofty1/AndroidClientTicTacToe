@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.tictactoe.datasource.room.entity.UserEntity
+import com.tictactoe.datasource.room.entity.UserWithGames
 import java.util.UUID
 
 @Dao
@@ -21,4 +23,8 @@ interface UserDao {
 
     @Delete
     suspend fun deleteUser(user: UserEntity)
+
+    @Transaction
+    @Query("SELECT * FROM user_table")
+    suspend fun getUserWithGames(): List<UserWithGames>
 }

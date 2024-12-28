@@ -1,12 +1,16 @@
 package com.tictactoe.domain.repository
 
+import android.util.Log
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.retrofit.mapper.UserMapperRetrofit
 import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.entity.UserEntity
 import com.tictactoe.domain.model.User
-import datasource.mapper.UserMapper
+import datasource.mapper.CurrentUserMapperRoom
+import datasource.mapper.GameMapperRetrofit
+import datasource.mapper.GameMapperRoom
 import domain.utils.AUTH_MESSSAGE
+import java.util.UUID
 import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
@@ -27,10 +31,13 @@ class AuthRepository @Inject constructor(
 
         val existingUser = databaseService.getUserByLogin(login)
         val isUserExist = networkService.isUserExist(login)
+        Log.d("TTT", isUserExist.toString())
+
+
         return if (!isUserExist) {
             if (password == confirmPassword) {
-                databaseService.insertUser(UserEntity(login, password))
                 networkService.createUser(login, password)
+                databaseService.insertUser(UserEntity(login, password))
                 AUTH_MESSSAGE.SUCCESS_REGISTER
             } else {
                 AUTH_MESSSAGE.PASSWORD_CONFLICT
@@ -43,20 +50,37 @@ class AuthRepository @Inject constructor(
     suspend fun loginUser(login: String, password: String): AUTH_MESSSAGE {
         networkService.setLoginAndPassword(login, password)
 
-        val result = networkService.loginUser(login, password)
+        val result = networkService.loginUser()
         val user = result.getOrNull()
-        if (user != null){
-            currentUser = UserMapperRetrofit.toDomain(user)
+
+        if (user != null) {
+            // Преобразуем данные пользователя из ответа
+            val domainUser = UserMapperRetrofit.toDomain(user)
+
+            databaseService.clearCurrentUser()
+
+            databaseService.insertCurrentUser(CurrentUserMapperRoom.fromDomain(domainUser))
+
+            // Получаем список игр пользователя с сервера
+            val games = user.games
+
+            if (games.isNotEmpty()) {
+                games.forEach { game ->
+                    val domGame = GameMapperRetrofit.toDomain(game.value, UUID.fromString(game.key))
+                    val gameEntity = GameMapperRoom.fromDomain(domGame, domainUser.login)
+                    databaseService.insertGame(gameEntity)
+                    Log.d("TTT", gameEntity.toString())
+                }
+            }
+
+            currentUser = domainUser
+
             return AUTH_MESSSAGE.SUCCESS_LOGIN
         }
+
         return AUTH_MESSSAGE.UNSUCCESS_LOGIN
-//        val user = databaseService.getUserByLogin(login)
-//        return if (user?.password == password) {
-//            currentUser = UserMapper.toDomainFromEntity(user)
-//            AUTH_MESSSAGE.SUCCESS_LOGIN
-//        }
-//        else AUTH_MESSSAGE.UNSUCCESS_LOGIN
     }
+
 
     // может быть такое что текущий пользователь не проиницмализирован
     fun getCredentials(): Pair<String, String>? {
@@ -72,4 +96,5 @@ class AuthRepository @Inject constructor(
         val passwordRegex = Regex("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
         return passwordRegex.matches(password)
     }
+
 }

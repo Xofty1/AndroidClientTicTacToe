@@ -21,4 +21,5 @@ enum class AUTH_MESSSAGE (val text: String){
     PASSWORD_CONFLICT("Пароли не совпадают"),
     WEAK_PASSWORD("Ненадежный пароль"),
     USER_CONFLICT("Такой пользователь уже существует"),
+    SERVER_REGISTRATION_ERROR("Ошибка при регистрации на стороне сервера"),
 }

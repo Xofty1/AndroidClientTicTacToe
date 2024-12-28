@@ -23,11 +23,14 @@ class NetworkService {
     private val client: OkHttpClient by lazy {
         val itersector = HttpLoggingInterceptor()
         itersector.level = HttpLoggingInterceptor.Level.BODY
+
+        val itersector2 = HttpLoggingInterceptor()
+        itersector2.level = HttpLoggingInterceptor.Level.HEADERS
         OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val interceptor = AuthInterceptor(login, password)
                 interceptor.intercept(chain)
-            }.addInterceptor(itersector)
+            }.addInterceptor(itersector).addInterceptor(itersector2)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
@@ -84,7 +87,7 @@ class NetworkService {
         }
     }
 
-    suspend fun loginUser(login: String, password: String): Result<UserDto> {
+    suspend fun loginUser(): Result<UserDto> {
         return try {
             val response = userApi.loginUser()
             if (response.isSuccessful) {

@@ -8,13 +8,14 @@ import domain.utils.TURN
 import java.util.UUID
 
 object GameMapperRoom {
-    fun fromDomain(game: Game): GameEntity {
+    fun fromDomain(game: Game, login: String): GameEntity {
         return GameEntity(
             id = game.id.toString(),
             board = game.board.board.flatMap { it.toList() }
                 .joinToString("") { if (it == 1) "X" else if (it == -1) "O" else " " },
             turn = game.turn.name,
-            status = game.status.result
+            status = game.status.result,
+            userId = login
         )
     }
 
