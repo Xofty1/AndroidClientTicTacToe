@@ -12,7 +12,10 @@ object GameMapperRetrofit {
         return GameDto(
             board = game.board.board,
             turn = game.turn.name,
-            status = game.status.result
+            status = game.status.result,
+            firstUserLogin = game.firstUserLogin,
+            secondUserLogin = game.secondUserLogin,
+
         )
     }
 
@@ -32,6 +35,8 @@ object GameMapperRetrofit {
                 STATUS.DRAW.result -> STATUS.DRAW
                 else -> STATUS.NONE
             },
+            firstUserLogin = gameDTO.firstUserLogin,
+            secondUserLogin = gameDTO.secondUserLogin,
         )
     }
 }

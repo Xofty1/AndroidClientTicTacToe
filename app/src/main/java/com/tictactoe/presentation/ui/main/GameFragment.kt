@@ -35,8 +35,9 @@ class GameFragment : Fragment() {
 
         binding = FragmentGameBinding.inflate(layoutInflater)
         // Set up the adapter
-        gameAdapter = GameAdapter(requireContext(), games)
+        gameAdapter = GameAdapter(requireContext(), games, activity as GameAdapter.OnGameClickListener)
         binding.list.adapter = gameAdapter
+        refreshGameList()
         // Set up SwipeRefreshLayout
         binding.swiperefresh.setOnRefreshListener {
             refreshGameList()

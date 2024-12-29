@@ -13,4 +13,6 @@ data class Game(
     val board: GameBoard,
     var turn: TURN,
     var status: STATUS = STATUS.NONE,
+    var firstUserLogin: String,
+    var secondUserLogin: String? = null,
 )

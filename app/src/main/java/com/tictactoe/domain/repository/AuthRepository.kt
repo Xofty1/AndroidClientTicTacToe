@@ -62,16 +62,16 @@ class AuthRepository @Inject constructor(
             databaseService.insertCurrentUser(CurrentUserMapperRoom.fromDomain(domainUser))
 
             // Получаем список игр пользователя с сервера
-            val games = user.games
-
-            if (games.isNotEmpty()) {
-                games.forEach { game ->
-                    val domGame = GameMapperRetrofit.toDomain(game.value, UUID.fromString(game.key))
-                    val gameEntity = GameMapperRoom.fromDomain(domGame, domainUser.login)
-                    databaseService.insertGame(gameEntity)
-                    Log.d("TTT", gameEntity.toString())
-                }
-            }
+//            val games = user.games
+//
+//            if (games.isNotEmpty()) {
+//                games.forEach { game ->
+//                    val domGame = GameMapperRetrofit.toDomain(game.value, UUID.fromString(game.key))
+//                    val gameEntity = GameMapperRoom.fromDomain(domGame, domainUser.login)
+//                    databaseService.insertGame(gameEntity)
+//                    Log.d("TTT", gameEntity.toString())
+//                }
+//            }
 
             currentUser = domainUser
 

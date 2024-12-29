@@ -15,7 +15,8 @@ object GameMapperRoom {
                 .joinToString("") { if (it == 1) "X" else if (it == -1) "O" else " " },
             turn = game.turn.name,
             status = game.status.result,
-            userId = login
+            firstUserLogin = game.firstUserLogin,
+            secondUserLogin = game.secondUserLogin
         )
     }
 
@@ -35,6 +36,8 @@ object GameMapperRoom {
                 STATUS.DRAW.result -> STATUS.DRAW
                 else -> STATUS.NONE
             },
+            firstUserLogin = gameEntity.firstUserLogin,
+            secondUserLogin = gameEntity.secondUserLogin,
         )
     }
 

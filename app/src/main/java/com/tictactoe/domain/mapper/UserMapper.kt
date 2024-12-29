@@ -22,8 +22,7 @@ object UserMapper {
     fun toDomainFromEntity(userEntity: UserEntity): User {
         return User(
             login = userEntity.login,
-            password = userEntity.password,
-            games = CopyOnWriteArrayList() // изменить
+            password = userEntity.password
         )
     }
 

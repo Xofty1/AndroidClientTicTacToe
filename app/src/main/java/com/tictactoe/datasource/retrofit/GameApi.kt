@@ -9,7 +9,7 @@ import retrofit2.http.*
 interface GameApi {
 
     @POST("/game/new")
-    fun createGame(): Call<ResponseBody>
+    fun createGame(@Body gameDto: GameDto): Call<Map<String, GameDto>>
 
     @GET("/game/{id}")
     fun getGame(@Path("id") gameId: String): Call<Pair<String, GameDto>>

@@ -12,16 +12,23 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = UserEntity::class, // Связь с UserEntity
             parentColumns = ["login"], // Поле login в UserEntity
-            childColumns = ["userId"], // Поле userId в GameEntity
+            childColumns = ["firstUserLogin"], // Поле userId в GameEntity
             onDelete = ForeignKey.CASCADE // Удаление игр при удалении пользователя
-        )
+        ),
+    ForeignKey(
+        entity = UserEntity::class,
+        parentColumns = ["login"],
+        childColumns = ["secondUserLogin"],
+        onDelete = ForeignKey.SET_NULL
+    )
     ],
-    indices = [Index(value = ["userId"])] // Создание индекса для ускорения запросов
+    indices = [Index(value = ["firstUserLogin"]), Index(value = ["secondUserLogin"])]
 )
 data class GameEntity(
     @PrimaryKey val id: String,
     val board: String,
     val turn: String,
     val status: String,
-    val userId: String // Внешний ключ для связи с UserEntity
+    var firstUserLogin: String,
+    var secondUserLogin: String? = null,
 )

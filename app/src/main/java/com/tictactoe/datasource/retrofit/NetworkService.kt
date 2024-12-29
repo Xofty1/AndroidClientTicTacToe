@@ -3,9 +3,11 @@ package com.tictactoe.datasource.retrofit
 
 import android.util.Base64
 import android.util.Log
+import com.tictactoe.datasource.retrofit.model.GameDto
 import com.tictactoe.datasource.retrofit.model.UserDto
 import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
+import domain.model.GameBoard
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -52,20 +54,35 @@ class NetworkService {
         retrofit.create(UserApi::class.java)
     }
 
-    suspend fun createNewGame(): Result<String> {
+    suspend fun createNewGame(turn: String, firstUserLogin: String, secondUserLogin: String?): Result<Map<String, GameDto>> {
+        val gameDto = GameDto(
+            board = GameBoard().board,
+            turn = turn,
+            status = "",
+            firstUserLogin = firstUserLogin,
+            secondUserLogin = secondUserLogin,
+        )
         return try {
-            val response = gameApi.createGame().awaitResponse()
-            val body = response.body()?.string()
-            if (!body.isNullOrEmpty()) {
-                Result.success(body)
+            // Отправляем запрос и получаем ответ
+            val response = gameApi.createGame(gameDto).awaitResponse()
+
+            // Проверяем успешность ответа
+            if (response.isSuccessful) {
+                val body = response.body()
+                if (body != null) {
+                    Result.success(body) // Возвращаем результат, если тело не пустое
+                } else {
+                    Result.failure(Exception("Empty response body"))
+                }
             } else {
-                Result.failure(Exception("Empty response body"))
+                Result.failure(Exception("Error response: ${response.code()}"))
             }
         } catch (e: Exception) {
             Log.d("TTTT", "52 " + e.message)
             Result.failure(e)
         }
     }
+
 
     suspend fun getGames(): Result<List<Game>> {
         return try {
@@ -129,7 +146,7 @@ class NetworkService {
 
 
     suspend fun createUser(login: String, password: String): Result<UserDto> {
-        val userDto = UserDto(login, password, emptyMap())
+        val userDto = UserDto(login, password)
         return try {
             Log.d("CreateUser", "Sending user creation request with login: $login")
             val response = userApi.createUser(userDto)
