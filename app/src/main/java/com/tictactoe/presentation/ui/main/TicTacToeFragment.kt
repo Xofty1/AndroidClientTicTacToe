@@ -1,6 +1,7 @@
 package com.tictactoe.presentation.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.tictactoe.domain.viewModel.GameViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
+import domain.utils.OPPONENT
 import domain.utils.TURN
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,28 +47,33 @@ class TicTacToeFragment(var game: Game) : Fragment() {
             updateUI(updatedGame)
         }
 
+
+
         return binding.root
     }
 
     private fun setupGame() {
         viewModel = GameViewModel(gameRepository)
+        viewModel.getCurrentPlayer()
+
         gridLayout = binding.gridLayout
         tvFirstPlayer = binding.tvFirstPlayer
         tvSecondPlayer = binding.tvSecondPlayer
-        val currentPlayer = viewModel.getCurrentPlayer(game)
-        tvFirstPlayer.text = if (game.firstUserLogin == currentPlayer) {
-            println(currentPlayer)
-            currentPlayer
-        } else {
-            game.secondUserLogin
-        }
-        println(currentPlayer)
-        tvSecondPlayer.text = if (game.secondUserLogin == currentPlayer) {
 
-            currentPlayer
-        } else {
-            game.firstUserLogin
+        viewModel.currentPlayer.observe(viewLifecycleOwner) { currentPlayerLogin ->
+            if (game.firstUserLogin == currentPlayerLogin) {
+                tvFirstPlayer.text = game.firstUserLogin
+                tvSecondPlayer.text = game.secondUserLogin
+            } else {
+                tvFirstPlayer.text = game.secondUserLogin
+                tvSecondPlayer.text = game.firstUserLogin
+            }
+            Log.d("CURUSER", currentPlayerLogin)
         }
+
+
+
+
         for (row in 0 until 3) {
             for (col in 0 until 3) {
 
@@ -83,7 +90,8 @@ class TicTacToeFragment(var game: Game) : Fragment() {
 
     private fun onCellClick(row: Int, col: Int, cell: TextView) {
         if (cell.text.isNotEmpty()) return // Ячейка уже занята
-        viewModel.makeMoveWithComputer(game, row, col)
+        if (game.secondUserLogin == OPPONENT.COMPUTER.type) viewModel.makeMoveWithComputer(game, row, col)
+        else TODO()
     }
 
     private fun updateUI(updatedGame: Game) {
@@ -98,21 +106,5 @@ class TicTacToeFragment(var game: Game) : Fragment() {
             }
         }
         currentPlayer = updatedGame.turn.name
-    }
-
-    private fun checkWin(row: Int, col: Int): Boolean {
-        // Проверяем строку, столбец и диагонали
-        return (board[row].all { it == currentPlayer } ||
-                board.all { it[col] == currentPlayer } ||
-                (row == col && board.indices.all { board[it][it] == currentPlayer }) ||
-                (row + col == 2 && board.indices.all { board[it][2 - it] == currentPlayer }))
-    }
-
-    private fun resetGame() {
-        board.forEach { it.fill("") }
-        for (i in 0 until gridLayout.childCount) {
-            (gridLayout.getChildAt(i) as TextView).text = ""
-        }
-        currentPlayer = "X"
     }
 }

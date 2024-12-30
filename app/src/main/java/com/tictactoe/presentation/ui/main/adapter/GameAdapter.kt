@@ -1,6 +1,7 @@
 package com.tictactoe.presentation.ui.main.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,17 +14,24 @@ import domain.model.Game
 class GameAdapter(
     private val context: Context,
     var games: List<Game>,
-    private val listener: OnGameClickListener
+    private val listener: OnGameClickListener,
+    private val fragmentListener: OnFragmentGameClickListener? = null
 ) : ArrayAdapter<Game>(context, 0, games) {
     interface OnGameClickListener {
         fun onGameClicked(game: Game)
     }
+
+    interface OnFragmentGameClickListener {
+        fun onFragmentGameClicked(game: Game)
+    }
+
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view =
             convertView ?: LayoutInflater.from(context).inflate(R.layout.item_game, parent, false)
 
         val game = getItem(position)
+        Log.d("GAMES", "54" + games.toString())
 
         val tvGameTitle = view.findViewById<TextView>(R.id.tvGameTitle)
         val tvGameDescription = view.findViewById<TextView>(R.id.tvGameDescription)
@@ -31,13 +39,17 @@ class GameAdapter(
         tvGameTitle.text = (game?.id ?: "Unknown Game").toString()
         tvGameDescription.text = (game?.firstUserLogin ?: "No Description").toString()
         view.setOnClickListener {
-            game?.let { listener.onGameClicked(it) }
+            game?.let {
+                listener.onGameClicked(it)
+                fragmentListener?.onFragmentGameClicked(it)
+            }
         }
         return view
     }
 
     fun updateGames(newGames: List<Game>) {
-        games = newGames
+        clear()
+        addAll(newGames)
         notifyDataSetChanged()
     }
 }

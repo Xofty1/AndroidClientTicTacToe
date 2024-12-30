@@ -16,4 +16,8 @@
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_launcher_foreground"
         android:title="Profile" />
+    <item
+        android:id="@+id/nav_find_game"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="nav_find_game" />
 </menu>

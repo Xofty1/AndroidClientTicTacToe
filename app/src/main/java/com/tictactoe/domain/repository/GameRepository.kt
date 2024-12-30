@@ -1,5 +1,6 @@
 package com.tictactoe.domain.repository
 
+import android.util.Log
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.room.DatabaseService
 import datasource.mapper.GameMapperRetrofit
@@ -14,6 +15,13 @@ class GameRepository @Inject constructor(
 
 
     suspend fun updateGame(game: Game) {
+        databaseService.updateGame(GameMapperRoom.fromDomain(game))
+    }
+
+    suspend fun joinToGame(game: Game) {
+
+        networkService.u
+
         databaseService.updateGame(GameMapperRoom.fromDomain(game))
     }
 
@@ -44,4 +52,35 @@ class GameRepository @Inject constructor(
     suspend fun getFirstPlayer(): String{
         return databaseService.getCurrentUser().login
     }
+
+    suspend fun getGames(): Result<List<Game>> {
+        return try {
+            val response = networkService.getGames()
+            val games = response.getOrNull()
+            if (games != null) {
+                Log.d("GAMES", games.toString())
+                Result.success(games.filter { it.firstUserLogin == databaseService.getCurrentUser().login })
+            } else {
+                Result.failure(Exception("Error fetching games"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getGamesToJoin(): Result<List<Game>> {
+        return try {
+            val response = networkService.getGames()
+            val games = response.getOrNull()
+            if (games != null) {
+                val joinGames = games.filter { it.secondUserLogin == null }
+                Result.success(joinGames)
+            } else {
+                Result.failure(Exception("Error fetching games"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 }

@@ -42,7 +42,12 @@ class MainActivity : AppCompatActivity(), GameAdapter.OnGameClickListener {
                     }
                     true
                 }
-
+                R.id.nav_find_game -> {
+                    if (currentFragment !is JoinGamesFragment) {
+                        switchFragment(JoinGamesFragment())
+                    }
+                    true
+                }
                 else -> false
             }
         }

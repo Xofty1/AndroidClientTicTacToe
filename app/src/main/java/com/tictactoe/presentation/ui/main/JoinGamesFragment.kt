@@ -1,10 +1,11 @@
 package com.tictactoe.presentation.ui.main
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import com.tictactoe.R
 import com.tictactoe.databinding.FragmentGameBinding
 import com.tictactoe.domain.repository.GameRepository
 import com.tictactoe.domain.viewModel.GameViewModel
@@ -13,8 +14,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import domain.model.Game
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
-open class GameFragment : Fragment() {
+class JoinGamesFragment : Fragment(), GameAdapter.OnFragmentGameClickListener {
     @Inject
     lateinit var gameRepository: GameRepository
     lateinit var viewModel: GameViewModel
@@ -34,7 +36,7 @@ open class GameFragment : Fragment() {
         binding.list.adapter = gameAdapter
 
         binding.swiperefresh.setOnRefreshListener {
-            viewModel.refreshGameList()
+            viewModel.refreshGameListJoinGames()
         }
 
         viewModel.games.observe(viewLifecycleOwner) { newGames ->
@@ -48,8 +50,12 @@ open class GameFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner, { errorMessage ->
         })
 
-        viewModel.refreshGameList()
+        viewModel.refreshGameListJoinGames()
 
         return binding.root
+    }
+
+    override fun onFragmentGameClicked(game: Game) {
+        viewModel.joinToGame(game)
     }
 }
