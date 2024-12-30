@@ -23,3 +23,8 @@ enum class AUTH_MESSSAGE (val text: String){
     USER_CONFLICT("Такой пользователь уже существует"),
     SERVER_REGISTRATION_ERROR("Ошибка при регистрации на стороне сервера"),
 }
+
+enum class OPPONENT(val type: String){
+    COMPUTER("Computer"),
+    PLAYER("Player")
+}

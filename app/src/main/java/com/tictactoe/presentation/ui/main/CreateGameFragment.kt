@@ -11,10 +11,12 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.tictactoe.R
 import com.tictactoe.datasource.retrofit.NetworkService
+import com.tictactoe.datasource.retrofit.model.GameDto
 import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.factory.NewGameFactory
 import dagger.hilt.android.AndroidEntryPoint
 import domain.model.Game
+import domain.utils.OPPONENT
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -42,49 +44,59 @@ class CreateGameFragment : Fragment() {
         val btnCreateGame = view.findViewById<Button>(R.id.btnCreateGame)
 
         btnCreateGame.setOnClickListener {
-            // Определяем выбранный вариант
             val selectedOption = when (radioGroup.checkedRadioButtonId) {
-                R.id.rbComputer -> "Компьютер"
-                R.id.rbPlayer -> "Другой игрок"
+                R.id.rbComputer -> OPPONENT.COMPUTER
+                R.id.rbPlayer -> OPPONENT.PLAYER
                 else -> null
             }
 
             if (selectedOption != null) {
-                // Логика создания игры
                 lifecycleScope.launch {
                     try {
-                        // Запрос к API
-                        val gameDataResult = networkService.createNewGame(
-                            "X",
-                            databaseService.getCurrentUser().login,
-                            null // надо будет добавить Компьютер в качестве оппонента
-                        )
-
-                        gameDataResult.onSuccess { gameData ->
-                            // Извлекаем первый элемент из Map
-                            val (gameId, gameDto) = gameData.entries.first()
-
-                            // Создаем объект Game
-                            val game = NewGameFactory.createNewGame(
-                                gameId,
-                                gameDto.firstUserLogin,
-                                gameDto.secondUserLogin
+                        val gameDataResult: Result<Map<String, GameDto>> = when (selectedOption) {
+                            OPPONENT.COMPUTER -> networkService.createNewGame(
+                                "X",
+                                databaseService.getCurrentUser().login,
+                                OPPONENT.COMPUTER.type
                             )
 
-                            // Переход на новый фрагмент
-                            (activity as? MainActivity)?.let { mainActivity ->
-                                val gameFragment = TicTacToeFragment(game)
-                                mainActivity.supportFragmentManager.beginTransaction()
-                                    .replace(R.id.fragment_container, gameFragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
+                            OPPONENT.PLAYER -> networkService.createNewGame(
+                                "X",
+                                databaseService.getCurrentUser().login,
+                                null
+                            )
+                        }
 
-                            Toast.makeText(
-                                requireContext(),
-                                "Игра с ${game.secondUserLogin ?: "Компьютером"} создана!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        gameDataResult.onSuccess { gameData ->
+                            if (gameData.isNotEmpty()) {
+                                val (gameId, gameDto) = gameData.entries.first()
+
+                                val game = NewGameFactory.createNewGame(
+                                    gameId,
+                                    gameDto.firstUserLogin,
+                                    gameDto.secondUserLogin
+                                )
+
+                                (activity as? MainActivity)?.let { mainActivity ->
+                                    val gameFragment = TicTacToeFragment(game)
+                                    mainActivity.supportFragmentManager.beginTransaction()
+                                        .replace(R.id.fragment_container, gameFragment)
+                                        .addToBackStack(null)
+                                        .commit()
+                                }
+
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Игра с ${game.secondUserLogin ?: "Компьютером"} создана!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Сервер вернул пустой результат",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }.onFailure { error ->
                             Toast.makeText(
                                 requireContext(),
@@ -97,14 +109,14 @@ class CreateGameFragment : Fragment() {
                             .show()
                     }
                 }
-
             } else {
                 Toast.makeText(requireContext(), "Выберите оппонента!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    companion object {
+
+        companion object {
         fun newInstance(): CreateGameFragment {
             return CreateGameFragment()
         }

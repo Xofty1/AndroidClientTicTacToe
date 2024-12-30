@@ -24,6 +24,9 @@ interface GameApi {
     ): Call<GameDto>
 
     @POST("/game/makeMove/{id}")
+    fun makeComputerMove(@Path("id") gameId: String): Call<GameDto>
+
+    @POST("/game/makeMove/{id}")
     fun makeMoveWithComputer(
         @Path("id") gameId: String
     ): Call<GameDto>

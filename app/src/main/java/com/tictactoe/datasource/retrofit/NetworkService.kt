@@ -171,6 +171,44 @@ class NetworkService {
         this.password = password
     }
 
+    suspend fun makeMove(gameId: String, cell: Int): Result<GameDto>{
+        return try {
+            val response = gameApi.makeMove(gameId, cell)
+                .awaitResponse() // Отправляем запрос на создание пользователя
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return Result.failure(Exception("Empty body"))
+                Log.d("CreateUser", "User created successfully: ${response.message()}")
+                Result.success(body)
+            } else {
+                Result.failure(Exception("Error: ${response.code()} - ${response.message()}")) // Обработка ошибок
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun makeMove(gameId: String): Result<GameDto>{
+        return try {
+            val response = gameApi.makeComputerMove(gameId)
+                .awaitResponse()
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return Result.failure(Exception("Empty body"))
+                Log.d("CreateUser", "User created successfully: ${response.message()}")
+                Result.success(body)
+            } else {
+                Result.failure(Exception("Error: ${response.code()} - ${response.message()}")) // Обработка ошибок
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
+
+
+
     // Получаем логин и пароль
     fun getLogin(): String = login
     fun getPassword(): String = password

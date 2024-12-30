@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvFirstPlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="a"
+            android:layout_weight="0.5"
+            android:gravity="start"/>
+
+        <TextView
+            android:id="@+id/tvSecondPlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="a"
+            android:layout_weight="0.5"
+            android:gravity="end"/>
+
+    </LinearLayout>
+
 
     <GridLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000000"
         android:columnCount="3"
         android:rowCount="3"
-        android:background="#000000"
         android:useDefaultMargins="true">
 
         <!-- Ячейки игрового поля -->
@@ -50,4 +76,4 @@
             android:id="@+id/cell_2_2"
             style="@style/TicTacToeCell" />
     </GridLayout>
-</FrameLayout>
+</LinearLayout>

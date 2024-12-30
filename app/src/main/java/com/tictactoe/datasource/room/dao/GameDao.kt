@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.tictactoe.datasource.room.entity.GameEntity
 
 @Dao
@@ -20,4 +21,7 @@ interface GameDao {
 
     @Delete
     suspend fun deleteGame(game: GameEntity)
+
+    @Update
+    suspend fun updateGame(game: GameEntity)
 }

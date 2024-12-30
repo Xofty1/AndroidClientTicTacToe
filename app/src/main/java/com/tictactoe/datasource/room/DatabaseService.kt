@@ -16,6 +16,7 @@ class DatabaseService @Inject constructor(private val db: TicTacToeDatabase) {
     suspend fun getGameById(id: String): GameEntity? = gameDao.getGameById(id)
     suspend fun getAllGames(): List<GameEntity> = gameDao.getAllGames()
     suspend fun deleteGame(game: GameEntity) = gameDao.deleteGame(game)
+    suspend fun updateGame(game: GameEntity) = gameDao.updateGame(game)
 
     suspend fun insertUser(user: UserEntity) = userDao.insertUser(user)
     suspend fun getUserByLogin(login: String): UserEntity? = userDao.getUserByLogin(login)

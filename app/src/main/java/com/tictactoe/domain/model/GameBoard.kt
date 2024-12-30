@@ -11,6 +11,10 @@ data class GameBoard(
         return board.all { row -> row.all { it != TURN.NONE.type } }
     }
 
+    fun getValueOnCell(row: Int, col: Int): Int{
+        return board[row][col]
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -8,7 +8,7 @@ import domain.utils.TURN
 import java.util.UUID
 
 object GameMapperRoom {
-    fun fromDomain(game: Game, login: String): GameEntity {
+    fun fromDomain(game: Game): GameEntity {
         return GameEntity(
             id = game.id.toString(),
             board = game.board.board.flatMap { it.toList() }
