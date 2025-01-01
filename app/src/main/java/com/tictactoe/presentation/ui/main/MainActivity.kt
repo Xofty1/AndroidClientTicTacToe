@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.tictactoe.R
 import com.tictactoe.databinding.ActivityMainBinding
 import com.tictactoe.domain.repository.GameRepository
+import com.tictactoe.domain.utils.PreferencesManager
 import com.tictactoe.domain.viewModel.GameViewModel
 import com.tictactoe.presentation.ui.authorization.AuthorizationActivity
 import com.tictactoe.presentation.ui.main.adapter.GameAdapter
@@ -86,7 +87,8 @@ class MainActivity : AppCompatActivity(), GameAdapter.OnGameClickListener {
 
     private fun handleLogout() {
         viewModel.clearData()
-
+        val sp = PreferencesManager(applicationContext)
+        sp.clearUserCredentials()
 
         val intent = Intent(this, AuthorizationActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

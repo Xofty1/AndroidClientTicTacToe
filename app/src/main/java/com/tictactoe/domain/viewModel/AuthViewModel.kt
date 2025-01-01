@@ -1,22 +1,19 @@
 package com.tictactoe.domain.viewModel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tictactoe.domain.repository.AuthRepository
+import com.tictactoe.domain.utils.PreferencesManager
 import domain.utils.AUTH_MESSSAGE
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
-
+class AuthViewModel(private val authRepository: AuthRepository, private val preferencesManager: PreferencesManager) : ViewModel() {
     var authResult: (AUTH_MESSSAGE) -> Unit = {}
 
-    private val _isAuthenticated = MutableStateFlow(false)
-    val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
-
-
+    private val _isAuthenticated = MutableLiveData(false)
+    val isAuthenticated: LiveData<Boolean> get() = _isAuthenticated
 
     fun register(login: String, password: String, confirmPassword: String) {
         viewModelScope.launch {
@@ -28,20 +25,26 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     fun login(login: String, password: String) {
         viewModelScope.launch {
             val success = authRepository.loginUser(login, password)
+            if (success == AUTH_MESSSAGE.SUCCESS_LOGIN) {
+                // Сохраняем логин и пароль в SharedPreferences
+                preferencesManager.saveUserCredentials(login, password)
+            }
             authResult(success)
         }
     }
 
-    fun checkAuth() {
-        viewModelScope.launch {
-            val curLogin = authRepository.getCurrentUser()
-            _isAuthenticated.value = (curLogin != null) && (authRepository.isExist(curLogin))
-        }
+    fun checkAuth(): Boolean {
+//        viewModelScope.launch {
+//            val curLogin = authRepository.getCurrentUser()
+//            _isAuthenticated.value = (curLogin != null) && (authRepository.isExist(curLogin))
+//        }
+        return preferencesManager.getUserLogin() != null
     }
 
     fun loginAuto() {
-        viewModelScope.launch {
-            authRepository.setAutoLoginAndPassword()
-        }
+//        viewModelScope.launch {
+//            authRepository.setAutoLoginAndPassword()
+//        }
+        authRepository.setAutoLoginAndPassword(preferencesManager.getUserLogin() ?: "",preferencesManager.getUserPassword() ?: "")
     }
 }

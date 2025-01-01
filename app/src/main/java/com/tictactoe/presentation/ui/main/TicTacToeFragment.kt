@@ -32,9 +32,9 @@ class TicTacToeFragment(var game: Game) : Fragment() {
     private lateinit var tvFirstPlayerTurn: TextView
     private lateinit var tvSecondPlayer: TextView
     private lateinit var tvSecondPlayerTurn: TextView
-    lateinit var binding: FragmentTicTacToeBinding
+    private lateinit var binding: FragmentTicTacToeBinding
     private var currentPlayer = "X"
-    var curUserLogin = ""
+    private var curUserLogin = ""
     lateinit var viewModel: GameViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -103,13 +103,6 @@ class TicTacToeFragment(var game: Game) : Fragment() {
     }
 
     private fun updateUI(updatedGame: Game) {
-//        if (curUserLogin == updatedGame.firstUserLogin) {
-//            tvFirstPlayer.text = curUserLogin
-//            tvSecondPlayer.text = updatedGame.secondUserLogin
-//        } else {
-//            tvFirstPlayer.text = curUserLogin
-//            tvSecondPlayer.text = updatedGame.firstUserLogin
-//        }
         if (updatedGame.firstUserLogin == curUserLogin) {
             tvFirstPlayer.text = curUserLogin
             tvSecondPlayer.text = updatedGame.secondUserLogin

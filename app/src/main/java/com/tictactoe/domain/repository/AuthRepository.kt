@@ -95,17 +95,23 @@ class AuthRepository @Inject constructor(
         return passwordRegex.matches(password)
     }
 
-    suspend fun setAutoLoginAndPassword() {
-        val curLogin = databaseService.getCurrentUser()?.login
-        if (curLogin != null) {
-            val curPassword = networkService.getPasswordByLogin(LoginRequest(curLogin))
-            if (curPassword != null)
-                currentUser = User(
-                    login = curLogin,
-                    password = curPassword
-                )
-        }
-        networkService.setLoginAndPassword(currentUser.login, currentUser.password)
+    fun setAutoLoginAndPassword(login: String, password: String) {
+//        val curLogin = databaseService.getCurrentUser()?.login
+//        if (curLogin != null) {
+//            try {
+//                val curPassword = networkService.getPasswordByLogin(LoginRequest(curLogin))
+//                if (curPassword != null)
+//                    currentUser = User(
+//                        login = curLogin,
+//                        password = curPassword
+//                    )
+//            }
+//            catch (_: Exception){
+//
+//            }
+//
+//        }
+        networkService.setLoginAndPassword(login, password)
     }
 
     suspend fun getCurrentUser(): String? {

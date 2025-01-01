@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.tictactoe.domain.repository.AuthRepository
+import com.tictactoe.domain.utils.PreferencesManager
 import com.tictactoe.domain.viewModel.AuthViewModel
 import com.tictactoe.presentation.ui.main.MainActivity
 import com.tictactoe.ui.theme.TIcTacToeTheme
@@ -33,51 +34,31 @@ class AuthorizationActivity : ComponentActivity() {
     @Inject
     lateinit var authRepository: AuthRepository
 
+    private lateinit var viewModel: AuthViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val viewModel = AuthViewModel(authRepository)
+        viewModel = AuthViewModel(authRepository, PreferencesManager(applicationContext))
+        if (viewModel.checkAuth()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            viewModel.loginAuto()
+            finish()
+        } else
 
-        setContent {
-            TIcTacToeTheme {
-                // Состояние проверки авторизации
-                val isAuthenticated by viewModel.isAuthenticated.collectAsState()
-                var isAuthChecked by remember { mutableStateOf(false) }
-
-                // Выполняем проверку один раз
-                Log.d("isAuthChecked","до " +  isAuthChecked.toString())
-                LaunchedEffect(Unit) {
-                    viewModel.checkAuth()
-                    isAuthChecked = true
-                }
-                Log.d("isAuthChecked","после " +  isAuthChecked.toString())
-
-                // Логика отображения экранов
-                if (!isAuthChecked) {
-                    // Отображаем экран загрузки, пока проверка не завершена
-                    LoadingScreen()
-                } else {
-                    // После завершения проверки авторизации
-                    if (isAuthenticated) {
-
-                        val intent = Intent(this@AuthorizationActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        viewModel.loginAuto()
-                        finish()
-
-                    } else {
-                        AuthorizationScreen(viewModel)
-                    }
+            setContent {
+                TIcTacToeTheme {
+                    AuthorizationScreen(viewModel)
                 }
             }
-        }
     }
+
 }
+
 
 @Composable
 fun AuthorizationScreen(viewModel: AuthViewModel) {
     var isLoginScreen by remember { mutableStateOf(true) }
-
     Surface(modifier = Modifier.fillMaxSize()) {
         if (isLoginScreen) {
             LoginScreen(viewModel, onNavigateToRegister = { isLoginScreen = false })
@@ -85,6 +66,7 @@ fun AuthorizationScreen(viewModel: AuthViewModel) {
             RegistrationScreen(viewModel, onNavigateToLogin = { isLoginScreen = true })
         }
     }
+
 }
 
 @Composable
