@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,67 +14,123 @@
 
         <TextView
             android:id="@+id/tvFirstPlayer"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="a"
-            android:layout_weight="0.5"
-            android:gravity="start"/>
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="Player 1"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/tvSecondPlayer"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="a"
-            android:layout_weight="0.5"
-            android:gravity="end"/>
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="Player 2"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000000" />
 
     </LinearLayout>
 
-
-    <GridLayout
-        android:id="@+id/gridLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:columnCount="3"
-        android:rowCount="3"
-        android:useDefaultMargins="true">
-
-        <!-- Ячейки игрового поля -->
-        <TextView
-            android:id="@+id/cell_0_0"
-            style="@style/TicTacToeCell" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp">
 
         <TextView
-            android:id="@+id/cell_0_1"
-            style="@style/TicTacToeCell" />
+            android:id="@+id/tvFirstPlayerTurn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="Your Turn"
+            android:textSize="14sp"
+            android:textColor="#666666" />
 
         <TextView
-            android:id="@+id/cell_0_2"
-            style="@style/TicTacToeCell" />
+            android:id="@+id/tvSecondPlayerTurn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="Waiting..."
+            android:textSize="14sp"
+            android:textColor="#666666" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/cell_1_0"
-            style="@style/TicTacToeCell" />
 
-        <TextView
-            android:id="@+id/cell_1_1"
-            style="@style/TicTacToeCell" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#000000">
 
-        <TextView
-            android:id="@+id/cell_1_2"
-            style="@style/TicTacToeCell" />
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:columnCount="3"
+            android:rowCount="3"
+            android:useDefaultMargins="true"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/cell_2_0"
-            style="@style/TicTacToeCell" />
+            <!-- Ячейки игрового поля -->
+            <TextView
+                android:id="@+id/cell_0_0"
+                style="@style/TicTacToeCell" />
 
-        <TextView
-            android:id="@+id/cell_2_1"
-            style="@style/TicTacToeCell" />
+            <TextView
+                android:id="@+id/cell_0_1"
+                style="@style/TicTacToeCell" />
 
-        <TextView
-            android:id="@+id/cell_2_2"
-            style="@style/TicTacToeCell" />
-    </GridLayout>
+            <TextView
+                android:id="@+id/cell_0_2"
+                style="@style/TicTacToeCell" />
+
+            <TextView
+                android:id="@+id/cell_1_0"
+                style="@style/TicTacToeCell" />
+
+            <TextView
+                android:id="@+id/cell_1_1"
+                style="@style/TicTacToeCell" />
+
+            <TextView
+                android:id="@+id/cell_1_2"
+                style="@style/TicTacToeCell" />
+
+            <TextView
+                android:id="@+id/cell_2_0"
+                style="@style/TicTacToeCell" />
+
+            <TextView
+                android:id="@+id/cell_2_1"
+                style="@style/TicTacToeCell" />
+
+            <TextView
+                android:id="@+id/cell_2_2"
+                style="@style/TicTacToeCell" />
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvGameStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Game Status"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#333333" />
 </LinearLayout>

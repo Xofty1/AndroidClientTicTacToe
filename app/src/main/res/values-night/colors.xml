@@ -8,8 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="colorPrimaryLight">#6200EE</color>
-    <color name="colorOnPrimaryLight">#FFFFFF</color>
-    <color name="colorBackgroundLight">#FFFFFF</color>
-    <color name="colorOnBackgroundLight">#000000</color>
+    <color name="colorPrimaryDark">#BB86FC</color>
+    <color name="colorOnPrimaryDark">#000000</color>
+    <color name="colorBackgroundDark">#121212</color>
+    <color name="colorOnBackgroundDark">#FFFFFF</color>
+
 </resources>

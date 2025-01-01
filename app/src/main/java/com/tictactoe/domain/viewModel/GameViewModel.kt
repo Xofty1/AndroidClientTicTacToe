@@ -49,6 +49,12 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
         }
     }
 
+    fun clearData() {
+        viewModelScope.launch {
+            gameRepository.clearData()
+        }
+    }
+
     fun makeMoveWithComputer(game: Game, row: Int, col: Int) {
         viewModelScope.launch {
             gameRepository.makeMove(game, row * 3 + col)?.let {
@@ -70,8 +76,8 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
 
     fun getCurrentPlayer(){
         viewModelScope.launch {
-            gameRepository.getFirstPlayer().apply {
-                _currentPlayer.postValue(this)
+            gameRepository.getFirstPlayer()?.let {
+                _currentPlayer.postValue(it)
             }
         }
     }

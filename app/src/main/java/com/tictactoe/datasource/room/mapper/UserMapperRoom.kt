@@ -1,5 +1,6 @@
 package datasource.mapper
 
+import com.tictactoe.datasource.room.entity.CurrentUserEntity
 import com.tictactoe.datasource.room.entity.GameEntity
 import com.tictactoe.datasource.room.entity.UserEntity
 import com.tictactoe.domain.model.User
@@ -18,13 +19,13 @@ object UserMapperRoom {
     }
 
 
-//    fun toDomain(userEntity: UserEntity): User {
-//        return User(
-//            login = userEntity.login,
-//            password = userEntity.password,
-//            games =
-//        )
-//    }
+    fun toDomain(userEntity: UserEntity): User {
+        return User(
+            login = userEntity.login,
+            password = userEntity.password
+        )
+    }
+
 
 
 }

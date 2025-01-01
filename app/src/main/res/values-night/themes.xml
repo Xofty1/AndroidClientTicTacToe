@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.TIcTacToe" parent="Theme.AppCompat.Light.DarkActionBar" />
+
+    <style name="Theme.TIcTacToe.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
+
+    <style name="AppTheme" parent="Theme.Material3.DayNight">
+        <!-- Основные цвета -->
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/colorOnPrimaryDark</item>
+        <item name="colorOnBackground">@color/colorOnBackgroundDark</item>
+
+        <!-- Дополнительные параметры -->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@color/colorBackgroundDark</item>
+    </style>
+
+
+</resources>

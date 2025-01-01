@@ -56,13 +56,13 @@ class CreateGameFragment : Fragment() {
                         val gameDataResult: Result<Map<String, GameDto>> = when (selectedOption) {
                             OPPONENT.COMPUTER -> networkService.createNewGame(
                                 "X",
-                                databaseService.getCurrentUser().login,
+                                databaseService.getCurrentUser()?.login ?: "",
                                 OPPONENT.COMPUTER.type
                             )
 
                             OPPONENT.PLAYER -> networkService.createNewGame(
                                 "X",
-                                databaseService.getCurrentUser().login,
+                                databaseService.getCurrentUser()?.login ?: "",
                                 null
                             )
                         }

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.tictactoe.domain.viewModel.AuthViewModel
+import domain.utils.AUTH_MESSSAGE
 
 @Composable
 fun RegistrationScreen(viewModel: AuthViewModel, onNavigateToLogin: () -> Unit) {
@@ -66,6 +67,9 @@ fun RegistrationScreen(viewModel: AuthViewModel, onNavigateToLogin: () -> Unit) 
                 viewModel.authResult = { success ->
                     Toast.makeText(context, success.text, Toast.LENGTH_SHORT)
                         .show()
+                    if (success == AUTH_MESSSAGE.SUCCESS_REGISTER){
+                        onNavigateToLogin()
+                    }
                 }
                 viewModel.register(login, password, confirmPassword)
             },

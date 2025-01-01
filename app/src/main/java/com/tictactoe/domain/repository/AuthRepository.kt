@@ -3,12 +3,14 @@ package com.tictactoe.domain.repository
 import android.util.Log
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.retrofit.mapper.UserMapperRetrofit
+import com.tictactoe.datasource.retrofit.model.LoginRequest
 import com.tictactoe.datasource.room.DatabaseService
 import com.tictactoe.datasource.room.entity.UserEntity
 import com.tictactoe.domain.model.User
 import datasource.mapper.CurrentUserMapperRoom
 import datasource.mapper.GameMapperRetrofit
 import datasource.mapper.GameMapperRoom
+import datasource.mapper.UserMapperRoom
 import domain.utils.AUTH_MESSSAGE
 import java.util.UUID
 import javax.inject.Inject
@@ -20,7 +22,11 @@ class AuthRepository @Inject constructor(
 
 
     lateinit var currentUser: User
-    suspend fun registerUser(login: String, password: String, confirmPassword: String): AUTH_MESSSAGE {
+    suspend fun registerUser(
+        login: String,
+        password: String,
+        confirmPassword: String
+    ): AUTH_MESSSAGE {
         if (login.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
             return AUTH_MESSSAGE.EMPTY_FIELDS
         }
@@ -30,7 +36,7 @@ class AuthRepository @Inject constructor(
 //        }
 
         val existingUser = databaseService.getUserByLogin(login)
-        val isUserExist = networkService.isUserExist(login)
+        val isUserExist = networkService.isUserExist(LoginRequest(login))
         Log.d("TTT", isUserExist.toString())
 
 
@@ -61,18 +67,6 @@ class AuthRepository @Inject constructor(
 
             databaseService.insertCurrentUser(CurrentUserMapperRoom.fromDomain(domainUser))
 
-            // Получаем список игр пользователя с сервера
-//            val games = user.games
-//
-//            if (games.isNotEmpty()) {
-//                games.forEach { game ->
-//                    val domGame = GameMapperRetrofit.toDomain(game.value, UUID.fromString(game.key))
-//                    val gameEntity = GameMapperRoom.fromDomain(domGame, domainUser.login)
-//                    databaseService.insertGame(gameEntity)
-//                    Log.d("TTT", gameEntity.toString())
-//                }
-//            }
-
             currentUser = domainUser
 
             return AUTH_MESSSAGE.SUCCESS_LOGIN
@@ -91,10 +85,31 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    suspend fun isExist(login: String): Boolean {
+        return networkService.isUserExist(LoginRequest(login))
+    }
+
     private fun isPasswordStrong(password: String): Boolean {
         // Проверка: длина не менее 8 символов, наличие букв, цифр, специальных символов
         val passwordRegex = Regex("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
         return passwordRegex.matches(password)
+    }
+
+    suspend fun setAutoLoginAndPassword() {
+        val curLogin = databaseService.getCurrentUser()?.login
+        if (curLogin != null) {
+            val curPassword = networkService.getPasswordByLogin(LoginRequest(curLogin))
+            if (curPassword != null)
+                currentUser = User(
+                    login = curLogin,
+                    password = curPassword
+                )
+        }
+        networkService.setLoginAndPassword(currentUser.login, currentUser.password)
+    }
+
+    suspend fun getCurrentUser(): String? {
+        return databaseService.getCurrentUser()?.login
     }
 
 }

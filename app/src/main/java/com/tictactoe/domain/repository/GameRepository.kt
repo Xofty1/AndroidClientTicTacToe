@@ -31,17 +31,24 @@ class GameRepository @Inject constructor(
         return updatedGame
     }
 
+    suspend fun clearData() {
+        databaseService.clearCurrentUser()
+        databaseService.deleteAllGames()
+    }
+
     suspend fun makeMove(game: Game, cell: Int): Game? {
         val currentUser = databaseService.getCurrentUser()
-        if ((currentUser.login == game.firstUserLogin && game.turn == TURN.X) ||
-            (currentUser.login == game.secondUserLogin && game.turn == TURN.O)
-        ) {
-            val result = networkService.makeMove(game.id.toString(), cell)
-            val updatedGame = result.getOrNull()
-            if (updatedGame != null) {
-                val domainGame = GameMapperRetrofit.toDomain(updatedGame, game.id)
-                updateGame(domainGame)
-                return domainGame
+        if (currentUser != null) {
+            if ((currentUser.login == game.firstUserLogin && game.turn == TURN.X) ||
+                (currentUser.login == game.secondUserLogin && game.turn == TURN.O)
+            ) {
+                val result = networkService.makeMove(game.id.toString(), cell)
+                val updatedGame = result.getOrNull()
+                if (updatedGame != null) {
+                    val domainGame = GameMapperRetrofit.toDomain(updatedGame, game.id)
+                    updateGame(domainGame)
+                    return domainGame
+                }
             }
         }
         return null
@@ -59,8 +66,8 @@ class GameRepository @Inject constructor(
         return null
     }
 
-    suspend fun getFirstPlayer(): String {
-        return databaseService.getCurrentUser().login
+    suspend fun getFirstPlayer(): String? {
+        return databaseService.getCurrentUser()?.login
     }
 
     suspend fun getGames(): Result<List<Game>> {
@@ -68,8 +75,10 @@ class GameRepository @Inject constructor(
             val response = networkService.getGames()
             val games = response.getOrNull()
             if (games != null) {
-                Log.d("GAMES", games.toString())
-                Result.success(games.filter { it.firstUserLogin == databaseService.getCurrentUser().login })
+                val currentUser = databaseService.getCurrentUser()?.login
+                if (currentUser != null)
+                    Result.success(games.filter { it.firstUserLogin == currentUser })
+                else Result.success(games)
             } else {
                 Result.failure(Exception("Error fetching games"))
             }
@@ -98,9 +107,11 @@ class GameRepository @Inject constructor(
             val response = networkService.getGames()
             val games = response.getOrNull()
             if (games != null) {
-                val currentUser = databaseService.getCurrentUser()
-                val joinGames =
-                    games.filter { it.secondUserLogin == null && it.firstUserLogin != currentUser.login }
+                val currentUser = databaseService.getCurrentUser()?.login
+                var joinGames = games
+                if (currentUser != null)
+                    joinGames = games.filter { it.secondUserLogin == null && it.firstUserLogin != currentUser }
+
                 Result.success(joinGames)
             } else {
                 Result.failure(Exception("Error fetching games"))

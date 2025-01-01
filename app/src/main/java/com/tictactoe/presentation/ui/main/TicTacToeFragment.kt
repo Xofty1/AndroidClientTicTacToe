@@ -29,7 +29,9 @@ class TicTacToeFragment(var game: Game) : Fragment() {
     lateinit var gameRepository: GameRepository
     private lateinit var gridLayout: GridLayout
     private lateinit var tvFirstPlayer: TextView
+    private lateinit var tvFirstPlayerTurn: TextView
     private lateinit var tvSecondPlayer: TextView
+    private lateinit var tvSecondPlayerTurn: TextView
     lateinit var binding: FragmentTicTacToeBinding
     private var currentPlayer = "X"
     var curUserLogin = ""
@@ -53,6 +55,8 @@ class TicTacToeFragment(var game: Game) : Fragment() {
         gridLayout = binding.gridLayout
         tvFirstPlayer = binding.tvFirstPlayer
         tvSecondPlayer = binding.tvSecondPlayer
+        tvFirstPlayerTurn = binding.tvFirstPlayerTurn
+        tvSecondPlayerTurn = binding.tvSecondPlayerTurn
 
 
         viewModel.gameState.observe(viewLifecycleOwner) { updatedGame ->
@@ -64,9 +68,13 @@ class TicTacToeFragment(var game: Game) : Fragment() {
             if (game.firstUserLogin == curUserLogin) {
                 tvFirstPlayer.text = game.firstUserLogin
                 tvSecondPlayer.text = game.secondUserLogin
+                tvFirstPlayerTurn.text = "X"
+                tvSecondPlayerTurn.text = "O"
             } else {
                 tvFirstPlayer.text = game.secondUserLogin
                 tvSecondPlayer.text = game.firstUserLogin
+                tvFirstPlayerTurn.text = "O"
+                tvSecondPlayerTurn.text = "X"
             }
         }
 
@@ -86,17 +94,34 @@ class TicTacToeFragment(var game: Game) : Fragment() {
 
     private fun onCellClick(row: Int, col: Int, cell: TextView) {
         if (cell.text.isNotEmpty()) return // Ячейка уже занята
-        if (game.secondUserLogin == OPPONENT.COMPUTER.type) viewModel.makeMoveWithComputer(game, row, col)
+        if (game.secondUserLogin == OPPONENT.COMPUTER.type) viewModel.makeMoveWithComputer(
+            game,
+            row,
+            col
+        )
         else viewModel.makeMoveWithPlayer(game, row, col)
     }
 
     private fun updateUI(updatedGame: Game) {
-        if (curUserLogin == updatedGame.firstUserLogin) {
+//        if (curUserLogin == updatedGame.firstUserLogin) {
+//            tvFirstPlayer.text = curUserLogin
+//            tvSecondPlayer.text = updatedGame.secondUserLogin
+//        } else {
+//            tvFirstPlayer.text = curUserLogin
+//            tvSecondPlayer.text = updatedGame.firstUserLogin
+//        }
+        if (updatedGame.firstUserLogin == curUserLogin) {
             tvFirstPlayer.text = curUserLogin
             tvSecondPlayer.text = updatedGame.secondUserLogin
+            tvFirstPlayerTurn.text = "X"
+            tvSecondPlayerTurn.text = if (updatedGame.secondUserLogin == null)
+                "Waiting..."
+            else "O"
         } else {
             tvFirstPlayer.text = curUserLogin
             tvSecondPlayer.text = updatedGame.firstUserLogin
+            tvFirstPlayerTurn.text = "O"
+            tvSecondPlayerTurn.text = "X"
         }
         for (row in 0 until 3) {
             for (col in 0 until 3) {

@@ -4,6 +4,7 @@ package com.tictactoe.datasource.retrofit
 import android.util.Base64
 import android.util.Log
 import com.tictactoe.datasource.retrofit.model.GameDto
+import com.tictactoe.datasource.retrofit.model.LoginRequest
 import com.tictactoe.datasource.retrofit.model.UserDto
 import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
@@ -132,18 +133,14 @@ class NetworkService {
                 Result.failure(Exception("Error: ${response.code()} - ${response.message()}"))
             }
         } catch (e: Exception) {
-            Log.e("LoginError", "Exception: ${e.message}")
             Result.failure(e)
         }
     }
 
-    suspend fun isUserExist(login: String): Boolean {
+    suspend fun isUserExist(login: LoginRequest): Boolean {
         return try {
-            // Отправляем запрос на сервер
-            Log.d("isExist", "Start response")
             val response = userApi.isExist(login).awaitResponse()
             val body = response.body()?.string()
-            Log.d("isExist", response.toString())
             if (response.isSuccessful) {
                 body == "true"
             } else {
@@ -152,6 +149,20 @@ class NetworkService {
         } catch (e: Exception) {
             println("Error checking user existence: ${e.message}")
             false // При ошибке возвращаем false
+        }
+    }
+
+    suspend fun getPasswordByLogin(login: LoginRequest): String? {
+        return try {
+            val response = userApi.getPassword(login).awaitResponse()
+            val body = response.body()?.string()
+            if (response.isSuccessful) {
+                body
+            } else {
+                throw Exception("Error123: ${response.code()} - ${response.message()}")
+            }
+        } catch (e: Exception) {
+            throw Exception("Error: $e")
         }
     }
 
