@@ -104,6 +104,24 @@ class NetworkService {
         }
     }
 
+    suspend fun getGame(id: String): Result<Game> {
+        return try {
+            val response = gameApi.getGame(id).awaitResponse()
+            if (response.isSuccessful) {
+                val body = response.body() ?: return Result.failure(Exception("Not found"))
+                val game = body.let { gameDto ->
+                    GameMapperRetrofit.toDomain(gameDto, UUID.fromString(id))
+                }
+
+                Result.success(game)
+            } else {
+                Result.failure(Exception("Error: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun loginUser(): Result<UserDto> {
         return try {
             val response = userApi.loginUser()
@@ -175,6 +193,23 @@ class NetworkService {
         return try {
             val response = gameApi.makeMove(gameId, cell)
                 .awaitResponse() // Отправляем запрос на создание пользователя
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return Result.failure(Exception("Empty body"))
+                Log.d("CreateUser", "User created successfully: ${response.message()}")
+                Result.success(body)
+            } else {
+                Result.failure(Exception("Error: ${response.code()} - ${response.message()}")) // Обработка ошибок
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun joinToGame(gameId: String): Result<GameDto>{
+        return try {
+            val response = gameApi.joinToGame(gameId)
+                .awaitResponse()
             if (response.isSuccessful) {
                 val body = response.body()
                     ?: return Result.failure(Exception("Empty body"))

@@ -31,7 +31,6 @@ class GameAdapter(
             convertView ?: LayoutInflater.from(context).inflate(R.layout.item_game, parent, false)
 
         val game = getItem(position)
-        Log.d("GAMES", "54" + games.toString())
 
         val tvGameTitle = view.findViewById<TextView>(R.id.tvGameTitle)
         val tvGameDescription = view.findViewById<TextView>(R.id.tvGameDescription)

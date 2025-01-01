@@ -32,7 +32,7 @@ class TicTacToeFragment(var game: Game) : Fragment() {
     private lateinit var tvSecondPlayer: TextView
     lateinit var binding: FragmentTicTacToeBinding
     private var currentPlayer = "X"
-    private val board = Array(3) { Array(3) { "" } }
+    var curUserLogin = ""
     lateinit var viewModel: GameViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,12 +42,6 @@ class TicTacToeFragment(var game: Game) : Fragment() {
         binding = FragmentTicTacToeBinding.inflate(layoutInflater)
 
         setupGame()
-        viewModel.gameState.observe(viewLifecycleOwner) { updatedGame ->
-            game = updatedGame
-            updateUI(updatedGame)
-        }
-
-
 
         return binding.root
     }
@@ -60,19 +54,21 @@ class TicTacToeFragment(var game: Game) : Fragment() {
         tvFirstPlayer = binding.tvFirstPlayer
         tvSecondPlayer = binding.tvSecondPlayer
 
+
+        viewModel.gameState.observe(viewLifecycleOwner) { updatedGame ->
+            game = updatedGame
+            updateUI(updatedGame)
+        }
         viewModel.currentPlayer.observe(viewLifecycleOwner) { currentPlayerLogin ->
-            if (game.firstUserLogin == currentPlayerLogin) {
+            curUserLogin = currentPlayerLogin
+            if (game.firstUserLogin == curUserLogin) {
                 tvFirstPlayer.text = game.firstUserLogin
                 tvSecondPlayer.text = game.secondUserLogin
             } else {
                 tvFirstPlayer.text = game.secondUserLogin
                 tvSecondPlayer.text = game.firstUserLogin
             }
-            Log.d("CURUSER", currentPlayerLogin)
         }
-
-
-
 
         for (row in 0 until 3) {
             for (col in 0 until 3) {
@@ -91,10 +87,17 @@ class TicTacToeFragment(var game: Game) : Fragment() {
     private fun onCellClick(row: Int, col: Int, cell: TextView) {
         if (cell.text.isNotEmpty()) return // Ячейка уже занята
         if (game.secondUserLogin == OPPONENT.COMPUTER.type) viewModel.makeMoveWithComputer(game, row, col)
-        else TODO()
+        else viewModel.makeMoveWithPlayer(game, row, col)
     }
 
     private fun updateUI(updatedGame: Game) {
+        if (curUserLogin == updatedGame.firstUserLogin) {
+            tvFirstPlayer.text = curUserLogin
+            tvSecondPlayer.text = updatedGame.secondUserLogin
+        } else {
+            tvFirstPlayer.text = curUserLogin
+            tvSecondPlayer.text = updatedGame.firstUserLogin
+        }
         for (row in 0 until 3) {
             for (col in 0 until 3) {
                 val cell = gridLayout.getChildAt(row * 3 + col) as TextView
@@ -106,5 +109,15 @@ class TicTacToeFragment(var game: Game) : Fragment() {
             }
         }
         currentPlayer = updatedGame.turn.name
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.startPollingGame(game)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.stopPollingGame()
     }
 }

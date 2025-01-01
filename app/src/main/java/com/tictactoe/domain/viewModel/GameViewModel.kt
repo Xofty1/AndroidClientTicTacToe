@@ -4,10 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.tictactoe.domain.repository.GameRepository
+import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
@@ -17,6 +20,8 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
 
     private val _currentPlayer = MutableLiveData<String>()
     val currentPlayer: LiveData<String> get() = _currentPlayer
+
+
 
     val games = MutableLiveData<List<Game>>()
     val error = MutableLiveData<String>()
@@ -55,6 +60,14 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
         }
     }
 
+    fun makeMoveWithPlayer(game: Game, row: Int, col: Int) {
+        viewModelScope.launch {
+            gameRepository.makeMove(game, row * 3 + col)?.let {
+                _gameState.postValue(it)
+            }
+        }
+    }
+
     fun getCurrentPlayer(){
         viewModelScope.launch {
             gameRepository.getFirstPlayer().apply {
@@ -63,7 +76,15 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
         }
     }
 
-    fun joinToGame(game: Game){ TODO()
+
+    fun joinToGame(game: Game){
+        viewModelScope.launch {
+            val updatedGame = gameRepository.joinToGame(game)
+            if (updatedGame != null){
+                _gameState.postValue(GameMapperRetrofit.toDomain(updatedGame, game.id))
+
+            }
+        }
     }
 
     fun refreshGameList() {
@@ -73,8 +94,6 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
                 val result = gameRepository.getGames()
                 result.fold(
                     onSuccess = { newGames ->
-                        Log.d("GAMES", newGames.toString())
-
                         games.value = newGames // Используйте setValue, а не postValue
                     },
                     onFailure = { error ->
@@ -112,4 +131,27 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
         }
     }
 
+    private var pollingJob: Job? = null
+
+    fun startPollingGame(game: Game) {
+        pollingJob = viewModelScope.launch {
+            while (isActive) {
+                try {
+                    val updatedGame = gameRepository.getGame(game.id.toString()).getOrNull()
+                    Log.d("Update345", "is null = $updatedGame")
+                    updatedGame?.let {
+                        Log.d("Update345", it.toString())
+                        _gameState.postValue(it)
+                    }
+                } catch (e: Exception) {
+                    error.postValue("Error fetching game updates: ${e.message}")
+                }
+                delay(1000)
+            }
+        }
+    }
+
+    fun stopPollingGame() {
+        pollingJob?.cancel()
+    }
 }

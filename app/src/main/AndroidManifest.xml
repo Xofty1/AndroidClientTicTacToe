@@ -30,7 +30,7 @@
         <activity
             android:name=".presentation.ui.main.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.TIcTacToe"
+            android:theme="@style/Theme.TIcTacToe.NoActionBar"
             android:windowNoTitle="true" />
     </application>
 
