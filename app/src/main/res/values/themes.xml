@@ -13,6 +13,7 @@
 
             <item name="android:windowLightStatusBar">true</item>
             <item name="android:navigationBarColor">@color/colorBackgroundLight</item>
+            <item name="text">@color/colorTextLight</item>
         </style>
 
 </resources>

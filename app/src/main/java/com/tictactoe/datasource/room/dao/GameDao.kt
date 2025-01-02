@@ -22,6 +22,10 @@ interface GameDao {
     @Query("DELETE FROM game_table")
     suspend fun deleteAllGames()
 
+    @Query("DELETE FROM game_table WHERE id = :id")
+    suspend fun deleteGameById(id: String)
+
+
     @Delete
     suspend fun deleteGame(game: GameEntity)
 

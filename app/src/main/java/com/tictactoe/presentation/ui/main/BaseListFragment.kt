@@ -1,5 +1,10 @@
 package com.tictactoe.presentation.ui.main
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -56,37 +61,82 @@ abstract class BaseListFragment : Fragment() {
 
         })
 
-//        val itemTouchHelperCallback = object : ItemTouchHelper.Callback() {
-//            override fun getMovementFlags(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder
-//            ): Int {
-//                // Разрешаем только свайпы вправо (удаление)
-//                val swipeFlags = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-//                return makeMovementFlags(0, swipeFlags)
-//            }
-//
-//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                // Когда элемент свайпается, удаляем его
-//                val position = viewHolder.adapterPosition
-//                if (direction == ItemTouchHelper.RIGHT) {
-//                    // Удаляем игру с анимацией
-//                    gameAdapter.removeGame(position)
-//                    // Здесь можно добавить логику для удаления с серверной стороны, если нужно
-//                }
-//            }
-//
-//            override fun onMove(
-//                recyclerView: RecyclerView,
-//                viewHolder: RecyclerView.ViewHolder,
-//                target: RecyclerView.ViewHolder
-//            ): Boolean = false
-//
-//            override fun isLongPressDragEnabled(): Boolean = false
-//        }
-//
-//        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-//        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+
+            private val paintBackground = Paint().apply {
+                color = Color.RED
+                isAntiAlias = true
+            }
+
+            private val paintText = Paint().apply {
+                color = Color.BLACK
+                textSize = 48f
+                isAntiAlias = true
+                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            }
+
+            override fun onChildDraw(
+                canvas: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    // Рисуем красный фон
+                    val background = RectF(
+                        itemView.right + dX,
+                        itemView.top.toFloat(),
+                        itemView.right.toFloat(),
+                        itemView.bottom.toFloat()
+                    )
+                    canvas.drawRect(background, paintBackground)
+
+                    // Рисуем текст "Удалить", привязанный к текущей границе красной области
+                    val text = "Удалить"
+                    val textWidth = paintText.measureText(text)
+                    val textX = itemView.right + dX / 2
+                    val textY = itemView.top + (itemView.height + paintText.textSize) / 2
+                    canvas.drawText(text, textX, textY, paintText)
+                }
+
+                super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                val swipeFlags = ItemTouchHelper.LEFT
+                return makeMovementFlags(0, swipeFlags)
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                if (direction == ItemTouchHelper.LEFT) {
+                    viewModel.removeGame(gameAdapter.games[position].id.toString())
+                    gameAdapter.removeGame(position)
+                }
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun isLongPressDragEnabled(): Boolean = false
+        }
+
+
+
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
 
 

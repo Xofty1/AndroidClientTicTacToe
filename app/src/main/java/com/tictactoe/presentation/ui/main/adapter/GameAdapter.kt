@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tictactoe.R
@@ -15,7 +14,7 @@ import domain.model.Game
 
 class GameAdapter(
     private val context: Context,
-    var games: MutableList<Game>,  // Используем MutableList для возможности модификации
+    var games: MutableList<Game>,
     private val listener: OnGameClickListener,
     private val fragmentListener: OnFragmentGameClickListener? = null
 ) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {

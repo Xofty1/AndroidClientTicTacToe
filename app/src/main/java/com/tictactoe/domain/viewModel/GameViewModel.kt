@@ -22,7 +22,6 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
     val currentPlayer: LiveData<String> get() = _currentPlayer
 
 
-
     val games = MutableLiveData<List<Game>>()
     val error = MutableLiveData<String>()
     val isLoading = MutableLiveData<Boolean>()
@@ -55,6 +54,12 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
         }
     }
 
+    fun removeGame(id: String) {
+        viewModelScope.launch {
+            gameRepository.deleteGame(id)
+        }
+    }
+
     fun makeMoveWithComputer(game: Game, row: Int, col: Int) {
         viewModelScope.launch {
             gameRepository.makeMove(game, row * 3 + col)?.let {
@@ -74,7 +79,7 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
         }
     }
 
-    fun getCurrentPlayer(){
+    fun getCurrentPlayer() {
         viewModelScope.launch {
             gameRepository.getFirstPlayer()?.let {
                 _currentPlayer.postValue(it)
@@ -83,10 +88,10 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
     }
 
 
-    fun joinToGame(game: Game){
+    fun joinToGame(game: Game) {
         viewModelScope.launch {
             val updatedGame = gameRepository.joinToGame(game)
-            if (updatedGame != null){
+            if (updatedGame != null) {
                 _gameState.postValue(GameMapperRetrofit.toDomain(updatedGame, game.id))
 
             }

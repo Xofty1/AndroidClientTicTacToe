@@ -123,6 +123,20 @@ class NetworkService {
         }
     }
 
+    suspend fun deleteGame(id: String): Result<Boolean> {
+        return try {
+            val response = gameApi.deleteGame(id).awaitResponse()
+            if (response.isSuccessful) {
+                val body = response.body() ?: return Result.failure(Exception("Not found"))
+                Result.success(body)
+            } else {
+                Result.failure(Exception("Error: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun loginUser(): Result<UserDto> {
         return try {
             val response = userApi.loginUser()

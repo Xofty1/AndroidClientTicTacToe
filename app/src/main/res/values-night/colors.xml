@@ -13,4 +13,7 @@
     <color name="colorBackgroundDark">#121212</color>
     <color name="colorOnBackgroundDark">#FFFFFF</color>
 
+    <color name="colorTextDark">#FFFFFF</color>
+
+
 </resources>

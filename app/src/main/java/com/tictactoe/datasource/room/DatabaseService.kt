@@ -3,7 +3,6 @@ package com.tictactoe.datasource.room
 import com.tictactoe.datasource.room.entity.CurrentUserEntity
 import com.tictactoe.datasource.room.entity.GameEntity
 import com.tictactoe.datasource.room.entity.UserEntity
-import java.util.UUID
 import javax.inject.Inject
 
 class DatabaseService @Inject constructor(private val db: TicTacToeDatabase) {
@@ -17,6 +16,7 @@ class DatabaseService @Inject constructor(private val db: TicTacToeDatabase) {
     suspend fun getAllGames(): List<GameEntity> = gameDao.getAllGames()
     suspend fun deleteAllGames() = gameDao.deleteAllGames()
     suspend fun deleteGame(game: GameEntity) = gameDao.deleteGame(game)
+    suspend fun deleteGameById(id: String) = gameDao.deleteGameById(id)
     suspend fun updateGame(game: GameEntity) = gameDao.updateGame(game)
 
     suspend fun insertUser(user: UserEntity) = userDao.insertUser(user)

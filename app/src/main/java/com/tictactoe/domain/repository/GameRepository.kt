@@ -1,7 +1,6 @@
 package com.tictactoe.domain.repository
 
 import android.util.Log
-import androidx.compose.ui.unit.TextUnit
 import com.tictactoe.datasource.retrofit.NetworkService
 import com.tictactoe.datasource.retrofit.model.GameDto
 import com.tictactoe.datasource.room.DatabaseService
@@ -34,6 +33,14 @@ class GameRepository @Inject constructor(
     suspend fun clearData() {
         databaseService.clearCurrentUser()
         databaseService.deleteAllGames()
+    }
+
+    suspend fun deleteGame(id: String) {
+        databaseService.deleteGameById(id)
+        val success = networkService.deleteGame(id).getOrNull()
+        if (success != null && success==true){
+            Log.d("FFF","FFF")
+        }
     }
 
     suspend fun makeMove(game: Game, cell: Int): Game? {

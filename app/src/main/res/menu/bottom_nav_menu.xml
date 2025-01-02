@@ -3,15 +3,15 @@
 
     <item
         android:id="@+id/nav_create_game"
-        android:icon="@drawable/ic_launcher_background"
+        android:icon="@drawable/my_game"
         android:title="Мои игры" />
 
     <item
         android:id="@+id/nav_profile"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/create_game"
         android:title="Создать игру" />
     <item
         android:id="@+id/nav_find_game"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/find_game"
         android:title="Поиск игр" />
 </menu>

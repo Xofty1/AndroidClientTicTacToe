@@ -1,10 +1,11 @@
 package com.tictactoe.datasource.retrofit
 
 import com.tictactoe.datasource.retrofit.model.GameDto
-import domain.model.Game
-import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface GameApi {
 
@@ -13,6 +14,9 @@ interface GameApi {
 
     @GET("/game/{id}")
     fun getGame(@Path("id") gameId: String): Call<GameDto>
+
+    @GET("/game/delete/{id}")
+    fun deleteGame(@Path("id") gameId: String): Call<Boolean>
 
     @GET("/games")
     fun getGames(): Call<Map<String, GameDto>>
