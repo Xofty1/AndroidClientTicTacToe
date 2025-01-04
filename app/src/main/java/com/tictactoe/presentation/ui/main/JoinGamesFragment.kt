@@ -1,5 +1,6 @@
 package com.tictactoe.presentation.ui.main
 
+import android.util.Log
 import com.tictactoe.domain.viewModel.GameViewModel
 import com.tictactoe.presentation.ui.main.adapter.GameAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,6 +15,9 @@ class JoinGamesFragment : BaseListFragment(), GameAdapter.OnFragmentGameClickLis
     }
 
     override fun onFragmentGameClicked(game: Game) {
+        Log.d("JOININGING", "JOIN1")
         viewModel.joinToGame(game)
+        Log.d("JOININGING", "JOIN2")
+
     }
 }

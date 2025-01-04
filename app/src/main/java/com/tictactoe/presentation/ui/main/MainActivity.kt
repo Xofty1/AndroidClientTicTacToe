@@ -1,6 +1,5 @@
 package com.tictactoe.presentation.ui.main
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -31,6 +30,9 @@ class MainActivity : AppCompatActivity(), GameAdapter.OnGameClickListener {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.title = "Ваш логин: ${PreferencesManager(this).getUserLogin()}"
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         viewModel = GameViewModel(gameRepository)
         val bottomNavigationView = binding.bottomNavigation
         if (savedInstanceState == null) {
@@ -99,7 +101,12 @@ class MainActivity : AppCompatActivity(), GameAdapter.OnGameClickListener {
 
 
     override fun onGameClicked(game: Game) {
-        val newFragment = TicTacToeFragment(game)
+        val newFragment = TicTacToeFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable("game", game)
+            }
+        }
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, newFragment)
             .addToBackStack(null)

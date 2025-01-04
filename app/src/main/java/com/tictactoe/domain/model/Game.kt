@@ -1,18 +1,17 @@
 package domain.model
 
-import com.tictactoe.domain.utils.UUIDSerializer
+import android.os.Parcelable
 import domain.utils.STATUS
 import domain.utils.TURN
-import kotlinx.serialization.Serializable
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
-
-@Serializable
+import java.io.Serializable
+@Parcelize
 data class Game(
-    @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val board: GameBoard,
     var turn: TURN,
     var status: STATUS = STATUS.NONE,
     var firstUserLogin: String,
     var secondUserLogin: String? = null,
-)
+) : Parcelable

@@ -1,12 +1,11 @@
 package domain.model
 
 import domain.utils.TURN
-import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-@Serializable
-data class GameBoard(
+data class GameBoard (
     var board: Array<IntArray> = Array(3) { IntArray(3) { 0 } }
-) {
+): Serializable{
     fun isFull(): Boolean {
         return board.all { row -> row.all { it != TURN.NONE.type } }
     }

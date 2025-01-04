@@ -40,7 +40,12 @@ abstract class BaseListFragment : Fragment() {
         binding = FragmentGameBinding.inflate(inflater, container, false)
         viewModel = GameViewModel(gameRepository)
         getViewModelMethod()(viewModel)
-        gameAdapter = GameAdapter(requireContext(), games, activity as GameAdapter.OnGameClickListener)
+        val fragmentGameClickListener = if (this is GameAdapter.OnFragmentGameClickListener) {
+            this
+        } else {
+            null
+        }
+        gameAdapter = GameAdapter(requireContext(), games, activity as GameAdapter.OnGameClickListener, fragmentGameClickListener)
         binding.recyclerView.adapter = gameAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 

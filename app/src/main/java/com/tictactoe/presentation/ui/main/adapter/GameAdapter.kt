@@ -45,12 +45,8 @@ class GameAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateGames(newGames: List<Game>) {
-        Log.d("GameAdapter", "Updating games, new size: ${games.size}")
-
         games.clear()
-        Log.d("GameAdapter", "Updating games, new size: ${games.size}")
         games.addAll(newGames)
-        Log.d("GameAdapter", "Updating games, new size: ${games.size}")
         notifyDataSetChanged()
     }
 

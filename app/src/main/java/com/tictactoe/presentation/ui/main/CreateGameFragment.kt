@@ -78,7 +78,12 @@ class CreateGameFragment : Fragment() {
                                 )
 
                                 (activity as? MainActivity)?.let { mainActivity ->
-                                    val gameFragment = TicTacToeFragment(game)
+                                    val gameFragment = TicTacToeFragment().apply {
+                                    arguments = Bundle().apply {
+                                        putParcelable("game", game)
+                                    }
+                                }
+
                                     mainActivity.supportFragmentManager.beginTransaction()
                                         .replace(R.id.fragment_container, gameFragment)
                                         .addToBackStack(null)

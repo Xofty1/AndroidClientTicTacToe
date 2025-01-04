@@ -84,7 +84,7 @@ class GameRepository @Inject constructor(
             if (games != null) {
                 val currentUser = databaseService.getCurrentUser()?.login
                 if (currentUser != null)
-                    Result.success(games.filter { it.firstUserLogin == currentUser })
+                    Result.success(games.filter { it.firstUserLogin == currentUser || it.secondUserLogin == currentUser})
                 else Result.success(games)
             } else {
                 Result.failure(Exception("Error fetching games"))

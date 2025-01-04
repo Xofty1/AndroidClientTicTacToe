@@ -19,12 +19,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import datasource.mapper.GameMapperRetrofit
 import domain.model.Game
 import domain.utils.OPPONENT
+import domain.utils.STATUS
 import domain.utils.TURN
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TicTacToeFragment(var game: Game) : Fragment() {
+class TicTacToeFragment : Fragment() {
     @Inject
     lateinit var gameRepository: GameRepository
     private lateinit var gridLayout: GridLayout
@@ -32,22 +33,24 @@ class TicTacToeFragment(var game: Game) : Fragment() {
     private lateinit var tvFirstPlayerTurn: TextView
     private lateinit var tvSecondPlayer: TextView
     private lateinit var tvSecondPlayerTurn: TextView
+    private lateinit var tvGameStatus: TextView
     private lateinit var binding: FragmentTicTacToeBinding
     private var currentPlayer = "X"
     private var curUserLogin = ""
     lateinit var viewModel: GameViewModel
+    lateinit var game: Game
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentTicTacToeBinding.inflate(layoutInflater)
-
+        val game = arguments?.getParcelable<Game>("game")
+        game?.let { this.game = it }
         setupGame()
 
         return binding.root
     }
-
     private fun setupGame() {
         viewModel = GameViewModel(gameRepository)
         viewModel.getCurrentPlayer()
@@ -57,7 +60,7 @@ class TicTacToeFragment(var game: Game) : Fragment() {
         tvSecondPlayer = binding.tvSecondPlayer
         tvFirstPlayerTurn = binding.tvFirstPlayerTurn
         tvSecondPlayerTurn = binding.tvSecondPlayerTurn
-
+        tvGameStatus = binding.tvGameStatus
 
         viewModel.gameState.observe(viewLifecycleOwner) { updatedGame ->
             game = updatedGame
@@ -116,6 +119,16 @@ class TicTacToeFragment(var game: Game) : Fragment() {
             tvFirstPlayerTurn.text = "O"
             tvSecondPlayerTurn.text = "X"
         }
+        if (game.secondUserLogin == null)
+            tvGameStatus.text = "Ждем соперника"
+        else
+            tvGameStatus.text = when (game.status) {
+                STATUS.DRAW -> "Ничья"
+                STATUS.NONE -> if (game.turn == TURN.O) "Ход ноликов" else "Ход крестиков"
+                STATUS.X_WIN -> if (updatedGame.firstUserLogin == curUserLogin) "Победа" else "Поражение"
+                STATUS.O_WIN -> if (updatedGame.secondUserLogin == curUserLogin) "Победа" else "Поражение"
+            }
+
         for (row in 0 until 3) {
             for (col in 0 until 3) {
                 val cell = gridLayout.getChildAt(row * 3 + col) as TextView
@@ -138,4 +151,6 @@ class TicTacToeFragment(var game: Game) : Fragment() {
         super.onStop()
         viewModel.stopPollingGame()
     }
+
+
 }

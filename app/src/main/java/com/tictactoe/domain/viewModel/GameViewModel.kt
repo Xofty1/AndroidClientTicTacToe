@@ -26,6 +26,15 @@ class GameViewModel(private val gameRepository: GameRepository) : ViewModel() {
     val error = MutableLiveData<String>()
     val isLoading = MutableLiveData<Boolean>()
 
+    fun setGame(game: Game) {
+        _gameState.value = game
+    }
+
+    fun getGame(): Game? {
+        return _gameState.value
+    }
+
+
     fun updateGame(game: Game) {
         viewModelScope.launch {
             gameRepository.updateGame(game)

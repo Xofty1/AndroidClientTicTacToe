@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
     id("dagger.hilt.android.plugin")
+    id("kotlin-parcelize")
 
 
 }
@@ -99,7 +100,6 @@ dependencies {
 
     implementation("io.ktor:ktor-server-content-negotiation:2.0.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
 
 }
